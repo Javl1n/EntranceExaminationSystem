@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Answer extends Model
 {
     use HasFactory;
+
+    /**
+     * Get the user that owns the Answer
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function question(): BelongsTo
+    {
+        return $this->belongsTo(Question::class);
+    }
 }

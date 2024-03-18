@@ -25,6 +25,9 @@ Route::view('profile', 'profile')
     ->middleware(['auth'])
     ->name('profile');
 
-Volt::route('/exams', 'pages.exam.index');
+Route::middleware(['auth', 'verified'])->group(function () {
+    Volt::route('/exams', 'pages.exam.index')->name('exams');
+});
+
 
 require __DIR__.'/auth.php';

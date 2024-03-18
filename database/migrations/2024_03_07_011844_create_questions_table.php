@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->text('description');
+            $table->integer('grade_level');
             $table->timestamps();
         });
     }
