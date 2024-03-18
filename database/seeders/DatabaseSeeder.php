@@ -20,6 +20,12 @@ class DatabaseSeeder extends Seeder
             'email' => 'farmodia@gmail.com',
             'password' => Hash::make('admin123')
         ]);
-        \App\Models\Category::factory(10)->create();
+        $subjects = ['Mathematics', 'English', 'Science', 'Filipino', 'History'];
+        
+        foreach($subjects as $subject) {
+            \App\Models\Category::factory()->create([
+                'title' => $subject,
+            ]);
+        }
     }
 }
