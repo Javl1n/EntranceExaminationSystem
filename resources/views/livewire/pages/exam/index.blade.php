@@ -29,45 +29,7 @@ state(['questions' => Question::with('category')->latest()->get()]);
                     </div>
                 @endsession
                 @foreach ($questions as $question)
-                    <div class="bg-white shadow-sm sm:rounded-lg mt-4 p-4 rounded-xl">
-                        <div class="flex gap-2">
-                            <div class="py-1 px-2 @if ($question->grade_level === 7) bg-green-50 @else bg-blue-50 @endif  rounded text-xs">Grade {{ $question->grade_level }}</div>
-                            @php
-                                switch ($question->category->id) {
-                                    case 1:
-                                        $background = 'bg-red-200';
-                                        break;
-                                    case 2:
-                                        $background = 'bg-yellow-100';
-                                        break;
-                                    case 3:
-                                        $background = 'bg-orange-100';
-                                        break;
-                                    case 4:
-                                        $background = 'bg-purple-100';
-                                        break;
-                                    case 5:
-                                        $background = 'bg-pink-200';
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            @endphp
-                            <div class="py-1 px-2 {{ $background }} rounded text-xs">{{ $question->category->title }}</div>
-                        </div>
-                        <div class="mt-4">{{ $question->description }}</div>
-                        <div class="grid grid-cols-2 grid-rows-2">
-                            @php
-                                $answers = $question->answers()->orderBy('letter')->get();
-                            @endphp
-
-                            @foreach ($answers as $answer)
-                                <div>
-                                    {{ $answer->letter }}-{{ $answer->description }}
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
+                    @livewire('questions.show-edit-state-manage', ['question' => $question])
                 @endforeach
                 
             </div>
