@@ -1,15 +1,17 @@
 <?php
 
-use function Livewire\Volt\{layout, state, title};
+use function Livewire\Volt\{layout, state, title, on};
 use App\Models\Question;
 use App\Models\Answer;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 layout('layouts.app');
 
 title('Exams - SLSPI Entrance Exam');
 
-state(['questions' => Question::with('category')->latest()->get()]);
-
+state(['questions' => Question::with(['category', 'answers' => function (Builder $query) {
+    $query->orderBy('letter');
+}])->latest()->get()]);
 
 ?>
 
@@ -29,9 +31,8 @@ state(['questions' => Question::with('category')->latest()->get()]);
                     </div>
                 @endsession
                 @foreach ($questions as $question)
-                    @livewire('questions.show-edit-state-manage', ['question' => $question])
+                    @livewire('questions.show-edit-state-manage', ['question' => $question, 'answers' => $question->answers])
                 @endforeach
-                
             </div>
             <div class="col-span-1">
                 Search
