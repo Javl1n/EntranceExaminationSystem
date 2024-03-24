@@ -36,11 +36,11 @@ state(['questions' => Question::with(['category', 'answers' => function (Builder
                     </div>
                 @endsession
                 @foreach ($questions as $question)
-                    @livewire('questions.show-edit-state-manage', ['question' => $question, 'answers' => $question->answers])
+                    @livewire('questions.index', ['question' => $question, 'answers' => $question->answers])
                 @endforeach
             </div>
             <div class="col-span-1">
-                Search
+                @livewire('timers.index')
             </div>
         </div>
     </div>

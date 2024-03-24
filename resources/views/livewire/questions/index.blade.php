@@ -5,7 +5,7 @@ use function Livewire\Volt\{state, on };
 state([
     'question',
     'answers',
-    'gradeColor' => fn($question) => $question->grade_level === 7 ? 'bg-green-50' : 'bg-blue-50',
+    'gradeColor' => fn($question) => $question->grade_level === 7 ? 'bg-green-200' : 'bg-blue-200',
     'categoryColor' => function($question) {
         switch ($question->category->id) {
             case 1:

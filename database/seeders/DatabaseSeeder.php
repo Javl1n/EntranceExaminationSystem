@@ -22,6 +22,20 @@ class DatabaseSeeder extends Seeder
         ]);
         $subjects = ['Mathematics', 'English', 'Science', 'Filipino', 'History'];
         
+        \App\Models\Timer::create([
+            'grade' => 7,
+            'hours' => 1,
+            'minutes' => 30,
+            'seconds' => 0
+        ]);
+
+        \App\Models\Timer::create([
+            'grade' => 11,
+            'hours' => 1,
+            'minutes' => 0,
+            'seconds' => 0
+        ]);      
+        
         foreach($subjects as $subject) {
             \App\Models\Category::factory()->create([
                 'title' => $subject,
