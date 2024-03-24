@@ -14,6 +14,20 @@ state([
             $arr[$answer->letter] = $answer->description;
         }
         return $arr;
+    },
+    'correctAnswer' => function($answers) {
+        foreach($answers as $answer) {
+            if($answer->is_correct) {
+                return $answer->letter;
+            }
+        }
+    },
+    'answerClasses' => function ($answers) {
+        $arr = [];
+        foreach($answers as $answer) {
+            $arr[$answer->letter] = $answer->is_correct ? "bg-green-200" : "bg-gray-100";
+        }
+        return $arr;
     }
 ]);
 
@@ -24,26 +38,29 @@ rules([
 
 $showMode = fn () => $this->dispatch("showMode-" . $this->question->id);
 
+$setCorrectAnswer = function ($choice) {
+    $this->correctAnswer = $choice;
+    foreach ($this->answers as $answer) {
+        $this->answerClasses[$answer->letter] = $this->correctAnswer === $answer->letter ? 'bg-green-200' : 'bg-gray-100';
+    }
+};
+
 $updateQuestion = function() {
     $this->validate();
-    // ddd($this->answerInputs);
     $this->question->update([
         'description' => $this->questionInput
     ]);
-    
     foreach(['A', 'B', 'C', 'D'] as $letter) {
-        // ddd($this->answerInputs[$letter]);
-        $this->answers
+        $answer = $this->answers
             ->where('letter', $letter)
             ->first()
             ->update([
-                'descrption' => $this->answerInputs[$letter]
-            ]);
+                'description' => $this->answerInputs[$letter],
+                'is_correct' => $this->correctAnswer === $letter ? true : false
+        ]);
     }
-
-    session()->flash('edit-success-' . $this->question->id, 'Question Added Successfully');
-    $this->dispatch("showMode-" . $this->question->id);
-
+    session()->flash('edit-success-' . $this->question->id,  'Changes Saved');
+    return $this->redirectRoute('exams', navigate: true);
 };
 
 ?>
@@ -77,15 +94,11 @@ $updateQuestion = function() {
     </div>
     <div class="grid grid-cols-2 grid-rows-2 gap-3 mt-4">
         @foreach ($this->answers as $answer)
-            @php
-                $letterColor = $answer->is_correct ? 'bg-green-200' : 'bg-gray-100';
-                $answerColor = $answer->is_correct ? 'border-green-200' : 'border-gray-100';
-            @endphp
             <div class="flex">
-                <div class="flex flex-col">
-                    <div class="w-14 rounded-l text-center py-4 px-0 font-bold {{ $letterColor }}">{{ $answer->letter }}</div>
+                <div class="flex flex-col"  x-on:click="$wire.setCorrectAnswer('{{ $answer->letter }}')">
+                    <div class="w-14 rounded-l text-center py-4 px-0 font-bold {{ $answerClasses[$answer->letter] }}">{{ $answer->letter }}</div>
                 </div>
-                <div class="py-2 px-2 flex-1 rounded-r {{ $letterColor }}">
+                <div class="py-2 px-2 flex-1 rounded-r {{ $answerClasses[$answer->letter] }}">
                     <div class="bg-white h-full rounded">
                         <textarea
                             class="resize-none p-0 w-full px-2 pt-2 text-base border-transparent h-full focus:border-transparent focus:ring-0 rounded overflow-hidden"
@@ -96,7 +109,7 @@ $updateQuestion = function() {
                             x-on:input="resize()"
                             wire:model="answerInputs.{{ $answer->letter }}"
                         ></textarea>
-                        @error("answersInput.{{ $answer->letter }}")
+                        @error("answersInputs.{{ $answer->letter }}")
                             <span class="text-red-500 text-xs">{{ $message }}</span>
                         @enderror
                     </div>

@@ -5,10 +5,7 @@ use function Livewire\Volt\{state, rules};
 
 rules([
     'question' => 'required',
-    'answerA' => 'required',
-    'answerB' => 'required',
-    'answerC' => 'required',
-    'answerD' => 'required',
+    'answerInputs.*' => 'required',
 ]);
 
 state([
@@ -23,14 +20,16 @@ state([
     'categoryChoice' => 1,
     'grade' => 7,
     'question' => '',
-    'answerA' => '',
-    'answerB' => '',
-    'answerC' => '',
-    'answerD' => '',
+    'answerInputs' => [
+        'A' => '',
+        'B' => '',
+        'C' => '',
+        'D' => '',
+    ],
 ]);
 
-$setCorrectAnswer = function ($number) {
-    $this->correctAnswer = $number;
+$setCorrectAnswer = function ($choice) {
+    $this->correctAnswer = $choice;
     $letters = ['A', 'B', 'C', 'D'];
     foreach ($letters as $letter) {
         $this->answerClasses[$letter] = $this->correctAnswer === $letter ? 'bg-green-200' : 'bg-gray-100';
@@ -49,31 +48,35 @@ $submitForm = function () {
     ]);
     
 
-    $answersDescription =[
-        [
-            'letter' => 'A',
-            'description' => $this->answerA,
-            'is_correct' => 'A' === $this->correctAnswer
-        ],
-        [
-            'letter' => 'B',
-            'description' => $this->answerB,
-            'is_correct' => 'B' === $this->correctAnswer
-        ],
-        [
-            'letter' => 'C',
-            'description' => $this->answerC,
-            'is_correct' => 'C' === $this->correctAnswer
-        ],
-        [
-            'letter' => 'D',
-            'description' => $this->answerD,
-            'is_correct' => 'D' === $this->correctAnswer
-        ],
-    ];
+    // $answersDescription =[
+    //     [
+    //         'letter' => 'A',
+    //         'description' => $this->answerInputs['A'],
+    //         'is_correct' => 'A' === $this->correctAnswer
+    //     ],
+    //     [
+    //         'letter' => 'B',
+    //         'description' => $this->answerB,
+    //         'is_correct' => 'B' === $this->correctAnswer
+    //     ],
+    //     [
+    //         'letter' => 'C',
+    //         'description' => $this->answerC,
+    //         'is_correct' => 'C' === $this->correctAnswer
+    //     ],
+    //     [
+    //         'letter' => 'D',
+    //         'description' => $this->answerD,
+    //         'is_correct' => 'D' === $this->correctAnswer
+    //     ],
+    // ];
 
-    foreach($answersDescription as $description) {
-        $question->answers()->create($description);
+    foreach(['A', 'B', 'C', 'D'] as $letter) {
+        $question->answers()->create([
+            'letter' => $letter,
+            'description' => $this->answerInputs[$letter],
+            'is_correct' => $letter === $this->correctAnswer
+        ]);
     }
 
 
@@ -118,6 +121,15 @@ $submitForm = function () {
                         <h1 class="bg-blue-100 px-3 py-2 rounded-l-lg font-bold select-none" title="Question Field">Q</h1>
                     </div>
                     <div class="bg-blue-100 p-2 flex-1 rounded-b-lg rounded-tr-lg">
+                        {{-- <textarea
+                                class="resize-none p-0 w-full px-2 pt-2 text-base border-transparent h-full focus:border-transparent focus:ring-0 rounded overflow-hidden"
+                                x-data="{
+                                    resize: () => { $el.style.height = '100px'; $el.style.height = $el.scrollHeight + 'px' }
+                                }"
+                                x-init="resize()"
+                                x-on:input="resize()"
+                                wire:model="question"
+                        ></textarea> --}}
                         <textarea class="w-full border-none resize-none rounded" rows="4" wire:model='question' required>{{ $question }}</textarea>
                         @error("question")
                             <span class="text-red-500 text-xs italic">{{ $message }}</span>
@@ -132,53 +144,29 @@ $submitForm = function () {
                     <span class="font-light text-xs italic text-gray-600">select the letter for the option that you want to be the <span class="text-green-600 font-bold">correct answer</span>.
                     </span>
                 </h1>
-                {{-- Answer A --}}
-                <div class="flex mt-2">
-                    <div class="flex flex-col">
-                        <h1 class="{{ $answerClasses['A'] }} transition ease-in-out px-3 py-2 rounded-l-lg font-bold select-none" wire:click="setCorrectAnswer('A')">A</h1>
-                    </div>
-                    <div class="{{ $answerClasses['A'] }} transition ease-in-out p-2 flex-1 rounded-b-lg rounded-tr-lg">
-                        <textarea class="w-full border-none resize-none rounded" rows="2" wire:model.live="answerA" required>{{ $answerA }}</textarea>
-                        @error("answerA")
-                            <span class="text-red-500 text-xs italic">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-                {{-- Answer B --}}
-                <div class="flex mt-2">
-                    <div class="flex flex-col">
-                        <h1 class="{{ $answerClasses['B'] }} transition ease-in-out px-3 py-2 rounded-l-lg font-bold select-none" wire:click="setCorrectAnswer('B')">B</h1>
-                    </div>
-                    <div class="{{ $answerClasses['B'] }} transition ease-in-out p-2 flex-1 rounded-b-lg rounded-tr-lg">
-                        <textarea class="w-full border-none resize-none rounded " rows="2" wire:model="answerB" required>{{ $answerB }}</textarea>
-                        @error("answerB")
-                            <span class="text-red-500 text-xs italic">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-                {{-- Answer C --}}
-                <div class="flex mt-2">
-                    <div class="flex flex-col">
-                        <h1 class="{{ $answerClasses['C'] }} transition ease-in-out px-3 py-2 rounded-l-lg font-bold select-none" wire:click="setCorrectAnswer('C')">C</h1>
-                    </div>
-                    <div class="{{ $answerClasses['C'] }} transition ease-in-out p-2 flex-1 rounded-b-lg rounded-tr-lg">
-                        <textarea class="w-full border-none resize-none rounded" rows="2" wire:model="answerC" required>{{ $answerC }}</textarea>
-                        @error("answerC")
-                            <span class="text-red-500 text-xs italic">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-                {{-- Answer D --}}
-                <div class="flex mt-2">
-                    <div class="flex flex-col">
-                        <h1 class="{{ $answerClasses['D'] }} transition ease-in-out px-3 py-2 rounded-l-lg font-bold select-none" wire:click="setCorrectAnswer('D')">D</h1>
-                    </div>
-                    <div class="{{ $answerClasses['D'] }} transition ease-in-out p-2 flex-1 rounded-b-lg rounded-tr-lg">
-                        <textarea class="w-full border-none resize-none rounded" rows="2" wire:model="answerD" required>{{ $answerD }}</textarea>
-                        @error("answerD")
-                            <span class="text-red-500 text-xs italic">{{ $message }}</span>
-                        @enderror
-                    </div>
+                <div class="grid grid-cols-2 grid-rows-2 gap-3 mt-2">
+                    @foreach (['A', 'B', 'C', 'D'] as $letter)
+                        <div class="flex">
+                            <div class="flex flex-col">
+                                <h1 class="{{ $answerClasses[$letter] }} transition ease-in-out px-3 py-2 rounded-l-lg font-bold select-none" wire:click="setCorrectAnswer('{{ $letter }}')">{{ $letter }}</h1>
+                            </div>
+                            <div class="{{ $answerClasses[$letter] }} transition ease-in-out p-2 flex-1 rounded-b-lg rounded-tr-lg">
+                                {{-- <textarea
+                                class="resize-none p-0 w-full px-2 pt-2 text-base border-transparent h-full focus:border-transparent focus:ring-0 rounded overflow-hidden"
+                                x-data="{
+                                    resize: () => { $el.style.height = '70px'; $el.style.height = $el.scrollHeight + 'px' }
+                                }"
+                                x-init="resize()"
+                                x-on:input="resize()"
+                                wire:model="answerInputs.{{ $letter }}"
+                                ></textarea> --}}
+                                <textarea class="w-full border-none resize-none rounded" rows="2" wire:model="answerInputs.{{ $letter }}" required></textarea>
+                                @error("answersInputs.{{ $letter }}")
+                                    <span class="text-red-500 text-xs italic">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
             {{-- Submit Button --}}

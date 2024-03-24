@@ -11,7 +11,7 @@ title('Exams - SLSPI Entrance Exam');
 
 state(['questions' => Question::with(['category', 'answers' => function (Builder $query) {
     $query->orderBy('letter');
-}])->latest()->get()]);
+}])->orderBy('updated_at', 'DESC')->get()]);
 
 ?>
 
@@ -28,6 +28,11 @@ state(['questions' => Question::with(['category', 'answers' => function (Builder
                 @session('question-add')
                     <div class="bg-green-400 text-white shadow-sm sm:rounded-lg mt-4 px-4 py-2 text-sm font-bold rounded-xl">
                         {{ session('question-add') }}
+                    </div>
+                @endsession
+                @session('deleted')
+                    <div class="bg-red-500 text-white shadow-sm sm:rounded-lg mt-4 px-4 py-2 text-sm font-bold rounded-xl">
+                        {{ session('deleted') }}
                     </div>
                 @endsession
                 @foreach ($questions as $question)
