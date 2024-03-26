@@ -30,13 +30,50 @@ state([
 ]);
 
 rules([
-    'input.*.*' => 'required|numeric'
+    'input.*.*' => 'required|numeric|integer'
+])->messages([
+    'input.*.*.required' => 'all fields must be required',
+    'input.*.*.numeric' => 'all fields must be numeric',
+    // 'input.*.*.integer' => 'all fields must be an ',
 ]);
 
 $showMode = fn () => $this->dispatch("timerShowMode");
 
 $save = function () {
+
+    // validate inputs
     $this->validate();
+
+    // process inputs G7
+    $inputG7 = $this->input['G7'];
+    $inputG7['minutes'] += intval($inputG7['seconds'] / 60);
+    $inputG7['seconds']  = intval($inputG7['seconds'] % 60);
+    $inputG7['hours']   += intval($inputG7['minutes'] / 60);
+    $inputG7['minutes']  = intval($inputG7['minutes'] % 60);
+
+    // store into database G7
+    $this->timerG7->update([
+        'hours' => $inputG7['hours'],
+        'minutes' => $inputG7['minutes'],
+        'seconds' => $inputG7['seconds'],
+    ]);
+
+    // process inputs G11
+    $inputG11 = $this->input['G11'];
+    $inputG11['minutes'] += intval($inputG11['seconds'] / 60);
+    $inputG11['seconds']  = intval($inputG11['seconds'] % 60);
+    $inputG11['hours']   += intval($inputG11['minutes'] / 60);
+    $inputG11['minutes']  = intval($inputG11['minutes'] % 60);
+
+    // store into database G11
+    $this->timerG11->update([
+        'hours' => $inputG11['hours'],
+        'minutes' => $inputG11['minutes'],
+        'seconds' => $inputG11['seconds'],
+    ]);
+
+    // refresh page
+    return $this->redirectRoute('exams', navigate: true);
 };
 
 ?>
@@ -47,6 +84,7 @@ $save = function () {
         <h1 class="text-blue-500 my-auto text-sm font-bold">Edit Mode</h1>
     </div>
     
+    {{-- G7 --}}
     <div class="flex gap-1 bg-green-300 rounded p-2 mt-4">
         <div class="w-12 text-center my-auto text-lg">
             G7:
@@ -88,12 +126,15 @@ $save = function () {
             <span class="">sec</span>
         </div>
     </div>
-    @foreach ($errors->get('input.G7.*') as $message)
-        <div class="mt-0 text-center italic text-red-500 text-sm">
-            {{ $message }}
-        </div>
+    @foreach ($errors->get('input.G7.*') as $key)
+        @error('input.G7.*')
+            <div class="mt-0 text-center italic text-red-500 text-sm">
+                {{ $message }}
+            </div>
+        @enderror
     @endforeach
     
+    {{-- G11 --}}
     <div class="flex gap-1 bg-blue-300 rounded p-2 mt-4">
         <div class="w-12 text-center my-auto text-lg">
             G11:
@@ -135,11 +176,14 @@ $save = function () {
             <span class="">sec</span>
         </div>
     </div>
-    <div class="mt-0 text-center italic text-red-500 text-sm">
-        sad
-    </div>
-    
-    
+    @foreach ($errors->get('input.G11.*') as $key)
+        @error('input.G11.*')
+            <div class="mt-0 text-center italic text-red-500 text-sm">
+                {{ $message }}
+            </div>
+        @enderror
+    @endforeach
+
     <div class="flex justify-end gap-4 mt-4">
         <a class="text-base uppercase text-gray-600 font-bold my-auto hover:cursor-pointer hover:text-green-500 transition linear" x-on:click="$wire.save">Save</a>
         <a class="text-base uppercase text-gray-600 font-bold my-auto hover:cursor-pointer hover:text-blue-500 transition linear" x-on:click="$wire.showMode">Cancel</a>

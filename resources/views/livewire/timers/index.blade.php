@@ -7,7 +7,7 @@ use App\Models\Timer;
 state([
     'timerG7' => Timer::where('grade', 7)->first(),
     'timerG11' => Timer::where('grade', 11)->first(),
-    'viewState' => 'edit',
+    'viewState' => 'show',
 ]);
 
 on([
