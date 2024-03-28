@@ -20,7 +20,6 @@ class DatabaseSeeder extends Seeder
             'email' => 'farmodia@gmail.com',
             'password' => Hash::make('admin123')
         ]);
-        $subjects = ['Mathematics', 'English', 'Science', 'Filipino', 'History'];
         
         \App\Models\Timer::create([
             'grade' => 7,
@@ -34,7 +33,9 @@ class DatabaseSeeder extends Seeder
             'hours' => 1,
             'minutes' => 0,
             'seconds' => 0
-        ]);      
+        ]);
+
+        $subjects = ['Mathematics', 'English', 'Science'];
         
         foreach($subjects as $subject) {
             \App\Models\Category::factory()->create([

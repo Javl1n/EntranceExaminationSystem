@@ -15,13 +15,7 @@ state([
                 return 'bg-yellow-100';
                 break;
             case 3:
-                return 'bg-orange-100';
-                break;
-            case 4:
                 return 'bg-purple-100';
-                break;
-            case 5:
-                return 'bg-pink-200';
                 break;
             default:
                 return '';
