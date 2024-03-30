@@ -38,7 +38,6 @@ $setCorrectAnswer = function ($choice) {
 
 $submitForm = function () {
 
-
     $this->validate();
 
     $question = App\Models\Question::create([
@@ -46,30 +45,6 @@ $submitForm = function () {
         'grade_level' => $this->grade,
         'category_id' => $this->categoryChoice
     ]);
-    
-
-    // $answersDescription =[
-    //     [
-    //         'letter' => 'A',
-    //         'description' => $this->answerInputs['A'],
-    //         'is_correct' => 'A' === $this->correctAnswer
-    //     ],
-    //     [
-    //         'letter' => 'B',
-    //         'description' => $this->answerB,
-    //         'is_correct' => 'B' === $this->correctAnswer
-    //     ],
-    //     [
-    //         'letter' => 'C',
-    //         'description' => $this->answerC,
-    //         'is_correct' => 'C' === $this->correctAnswer
-    //     ],
-    //     [
-    //         'letter' => 'D',
-    //         'description' => $this->answerD,
-    //         'is_correct' => 'D' === $this->correctAnswer
-    //     ],
-    // ];
 
     foreach(['A', 'B', 'C', 'D'] as $letter) {
         $question->answers()->create([
@@ -82,7 +57,7 @@ $submitForm = function () {
 
     session()->flash('question-add', 'Question Added Successfully');
 
-    return $this->redirectRoute('exams', navigate: true);
+    return $this->redirectRoute('exams.index', navigate: true);
 }
 
 ?>

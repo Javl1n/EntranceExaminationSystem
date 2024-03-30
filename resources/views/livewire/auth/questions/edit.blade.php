@@ -60,7 +60,7 @@ $updateQuestion = function() {
         ]);
     }
     session()->flash('edit-success-' . $this->question->id,  'Changes Saved');
-    return $this->redirectRoute('exams', navigate: true);
+    return $this->redirectRoute('exams.index', navigate: true);
 };
 
 ?>

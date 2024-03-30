@@ -17,7 +17,8 @@ class QuestionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'description' => fake()->text(),
+            'grade_level' => 7,
         ];
     }
 }

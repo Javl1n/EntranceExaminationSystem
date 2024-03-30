@@ -31,7 +31,7 @@ $deleteQuestion = function() {
         @endsession
         <div class="flex gap-2">
             <button class="px-4 text-gray-500 text-sm font-bold rounded uppercase hover:text-blue-500 transition ease-linear" wire:click='editMode'>Edit</button>
-            <button class="px-4 text-red-400 text-sm font-bold rounded uppercase hover:text-red-700 transition ease-linear" wire:click='deleteQuestion'>Delete</button>
+            <button class="px-4 text-red-400 text-sm font-bold rounded uppercase hover:text-red-700 transition ease-linear" wire:click='deleteQuestion' wire:confirm="Are you sure you want to delete this question?">Delete</button>
         </div>
     </div>
     <div class="mt-4 break-words text-lg">{{ $question->description }}</div>

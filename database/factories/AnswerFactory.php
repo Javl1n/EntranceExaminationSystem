@@ -17,7 +17,8 @@ class AnswerFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'description' => fake()->word(),
+            'is_correct' => true
         ];
     }
 }

@@ -24,7 +24,7 @@ state(['questions' => Question::with(['category', 'answers' => function (Builder
     <div class="max-w-7xl min-h-max mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <div class="lg:grid lg:grid-cols-3 lg:gap-5">
             <div class="col-span-2">
-                @livewire('questions.create')
+                @livewire('auth.questions.create')
                 @session('question-add')
                     <div class="bg-green-400 text-white shadow-sm sm:rounded-lg mt-4 px-4 py-2 text-sm font-bold rounded-xl">
                         {{ session('question-add') }}
@@ -36,11 +36,11 @@ state(['questions' => Question::with(['category', 'answers' => function (Builder
                     </div>
                 @endsession
                 @foreach ($questions as $question)
-                    @livewire('questions.index', ['question' => $question, 'answers' => $question->answers])
+                    @livewire('auth.questions.index', ['question' => $question, 'answers' => $question->answers])
                 @endforeach
             </div>
             <div class="col-span-1">
-                @livewire('timers.index')
+                @livewire('auth.timers.index')
             </div>
         </div>
     </div>

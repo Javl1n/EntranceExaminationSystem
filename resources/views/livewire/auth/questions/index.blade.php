@@ -36,9 +36,9 @@ on([
 
 <div class="bg-white shadow-sm sm:rounded-lg mt-4 p-4 rounded-xl transition ease-linear">
     @if($viewState === 'show')
-        <livewire:questions.show :$question :$answers :$gradeColor :$categoryColor />
+        <livewire:auth.questions.show :$question :$answers :$gradeColor :$categoryColor />
     @elseif ($viewState === 'edit')
-        <livewire:questions.edit :$question :$answers :$gradeColor :$categoryColor />
+        <livewire:auth.questions.edit :$question :$answers :$gradeColor :$categoryColor />
     @endif
 </div>
 

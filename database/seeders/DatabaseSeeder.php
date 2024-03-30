@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 
 class DatabaseSeeder extends Seeder
 {
@@ -35,12 +36,68 @@ class DatabaseSeeder extends Seeder
             'seconds' => 0
         ]);
 
-        $subjects = ['Mathematics', 'English', 'Science'];
-        
+        $subjects = [
+            'Mathematics', 
+            'English', 
+            'Science'
+        ]; 
         foreach($subjects as $subject) {
-            \App\Models\Category::factory()->create([
+            $category = \App\Models\Category::factory()
+            ->has(
+                \App\Models\Question::factory(['grade_level' => 7])->count(5)
+                ->has(
+                    \App\Models\Answer::factory()->count(4)
+                    ->sequence(
+                        ['letter' => 'A', 'is_correct' => true],
+                        ['letter' => 'B', 'is_correct' => false],
+                        ['letter' => 'C', 'is_correct' => false],
+                        ['letter' => 'D', 'is_correct' => false],
+                    )
+                )
+            )
+            ->has(
+                \App\Models\Question::factory(['grade_level' => 11])->count(5)
+                ->has(
+                    \App\Models\Answer::factory()->count(4)
+                    ->sequence(
+                        ['letter' => 'A', 'is_correct' => true],
+                        ['letter' => 'B', 'is_correct' => false],
+                        ['letter' => 'C', 'is_correct' => false],
+                        ['letter' => 'D', 'is_correct' => false],
+                    )
+                )
+            )
+            ->create([
                 'title' => $subject,
             ]);
+            
+
+            // $category->questions->factory()->count(5)
+            // ->has(
+            //     \App\Models\Answer::factory()->count(4)
+            //     ->sequence(
+            //         ['letter' => 'A', 'is_correct' => true],
+            //         ['letter' => 'B', 'is_correct' => false],
+            //         ['letter' => 'C', 'is_correct' => false],
+            //         ['letter' => 'D', 'is_correct' => false],
+            //     )
+            // )->create([
+            //     'grade_level' => 7
+            // ]);
+
+            // $category->questions->factory()->count(5)
+            // ->has(
+            //     \App\Models\Answer::factory()->count(4)
+            //     ->sequence(
+            //         ['letter' => 'A', 'is_correct' => true],
+            //         ['letter' => 'B', 'is_correct' => false],
+            //         ['letter' => 'C', 'is_correct' => false],
+            //         ['letter' => 'D', 'is_correct' => false],
+            //     )
+            // )->create([
+            //     'grade_level' => 11
+            // ]);
+
         }
     }
 }

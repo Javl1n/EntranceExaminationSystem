@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('examinees', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('grade_level');
-            $table->string('email')->unique();
+            $table->string('name');
+            $table->integer('grade_level');
+            $table->string('contact');
+            // $table->string('email')->unique();
             $table->timestamps();
         });
     }

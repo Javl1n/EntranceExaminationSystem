@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="antialiased">
-        <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white gap-5">
+        <div class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-blue-500 selection:text-white gap-5">
             @if (Route::has('login'))
                 <livewire:welcome.navigation />
             @endif
@@ -23,7 +23,7 @@
             <div>
                 <h1 class="text-4xl">St. Lorenzo School of Polomolok</h1>
                 <h1 class="text-6xl mb-5">Entrance Examination</h1>
-                <a href="/exam/fillout" class="transition ease-in-out duration-300 px-6 py-2 mt-5 bg-blue-600 hover:bg-blue-900 text-white font-bold rounded">Get Started</a>
+                <a href="{{ route('examinees.create') }}" wire:navigate class="transition ease-in-out duration-300 px-6 py-2 mt-5 bg-blue-600 hover:bg-blue-900 text-white font-bold rounded">Get Started</a>
             </div>
         </div>
     </body>

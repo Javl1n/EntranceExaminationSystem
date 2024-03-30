@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Examinee extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name', 'contact', 'grade_level'];
 }
