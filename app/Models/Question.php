@@ -32,4 +32,14 @@ class Question extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    /**
+     * Get all of the examinee_answers for the Question
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function examinee_answers(): HasMany
+    {
+        return $this->hasMany(ExamineeAnswer::class, 'question_id');
+    }
 }

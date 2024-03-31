@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
         foreach($subjects as $subject) {
             $category = \App\Models\Category::factory()
             ->has(
-                \App\Models\Question::factory(['grade_level' => 7])->count(5)
+                \App\Models\Question::factory(['grade_level' => 7])->count(3)
                 ->has(
                     \App\Models\Answer::factory()->count(4)
                     ->sequence(
@@ -54,9 +54,14 @@ class DatabaseSeeder extends Seeder
                         ['letter' => 'D', 'is_correct' => false],
                     )
                 )
+                ->sequence(
+                    ['description' =>  "$subject question 1"],
+                    ['description' => "$subject question 2"],
+                    ['description' => "$subject question 3"],
+                )
             )
             ->has(
-                \App\Models\Question::factory(['grade_level' => 11])->count(5)
+                \App\Models\Question::factory(['grade_level' => 11])->count(2)
                 ->has(
                     \App\Models\Answer::factory()->count(4)
                     ->sequence(
@@ -65,6 +70,11 @@ class DatabaseSeeder extends Seeder
                         ['letter' => 'C', 'is_correct' => false],
                         ['letter' => 'D', 'is_correct' => false],
                     )
+                )
+                ->sequence(
+                    ['description' =>  "$subject question 1"],
+                    ['description' => "$subject question 2"],
+                    ['description' => "$subject question 3"],
                 )
             )
             ->create([

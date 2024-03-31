@@ -4,6 +4,7 @@ use function Livewire\Volt\{state, layout, computed, mount, on};
 
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use App\Models\Examinee;
+use App\Models\ExamineeAnswer;
 use App\Models\Timer;
 use App\Models\Question;
 use App\Models\Answer;
@@ -58,13 +59,30 @@ $selectAnswers = function ($question, $letter) {
 
 
 $submit = function ()  {
-    return ()
+    $this->examinee->answers()->delete();
+    foreach ($this->selectedAnswers as $key => $value) {
+        $this->examinee->answers()->create([
+            'question_id' => $key,
+            'answer_id' => $value
+        ]);
+    }
+    $correctCount = 0;
+
+    foreach ($this->examinee->answers as $input) {
+        if ($input->answer->is_correct) {
+            $correctCount++;
+        }
+    }
+    
+    ddd($correctCount);
 };
 
 ?>
 
 <div class="min-h-screen flex justify-center bg-gray-100">
-    <div class="pt-24 w-2/4  overflow-scroll"  x-data="{
+    <div 
+    class="pt-24 w-2/4  overflow-scroll"  
+    x-data="{
         n: 0,
         order: [
             @foreach ($this->questionOrder as $question)
@@ -74,12 +92,41 @@ $submit = function ()  {
             @foreach ($this->questionOrder as $question)
                question{{ $question }}: '',
             @endforeach
+        },
+        tabReset: '',
+        sortArray (array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+            
+                // swap elements array[i] and array[j]
+                // we use 'destructuring assignment' syntax to achieve that
+                // you'll find more details about that syntax in later chapters
+                // same can be written as:
+                // let t = array[i]; array[i] = array[j]; array[j] = t
+                [array[i], array[j]] = [array[j], array[i]];
+              }
         }
-    }">
+    }"
+    x-init="document.addEventListener('visibilitychange', (event) => {
+        if (document.visibilityState != 'visible') {
+            n = 0;
+            tabReset = 'Tab has been reset';
+            sortArray(order);
+            selectedAnswers= {
+                @foreach ($this->questionOrder as $question)
+                   question{{ $question }}: '',
+                @endforeach
+            }
+        }
+    })"
+    >
         <h1 class="font-bold text-3xl text-center">Grade {{ $examinee->grade_level }} Entrance Examination</h1>
         <div class="flex justify-between mt-10">
             <div>
                 Question <span x-text="n + 1"></span> out of {{ $questions->count() }}
+            </div>
+            <div x-text="tabReset" class="text-red-500">
+
             </div>
             <div x-data="timer(
                 new Date().setHours(new Date().getHours() + {{ $timer->hours }},
@@ -139,7 +186,6 @@ $submit = function ()  {
                         },
                     }
                 }
-
             </script>
         </div>
         
@@ -181,14 +227,14 @@ $submit = function ()  {
                                     <div class="flex">
                                         <div class="flex flex-col">
                                             <div 
-                                            x-on:click="selectAnswer('{{ $answer->letter }}')" 
+                                            x-on:click="selectAnswer({{ $answer->id }})" 
                                             class="w-14 rounded-l text-center py-4 font-bold transition ease-in-out"
-                                            :class = "selectedAnswers.question{{ $question->id }} == '{{ $answer->letter }}' ? 'bg-green-400' : 'bg-gray-100'"
+                                            :class = "selectedAnswers.question{{ $question->id }} == {{ $answer->id }} ? 'bg-blue-400 text-white' : 'bg-gray-100'"
                                             >{{ $answer->letter }}</div>
                                         </div>
                                         <div 
                                         class="py-2 px-2 flex-1 rounded-r transition ease-in-out"
-                                        :class = "selectedAnswers.question{{ $question->id }} == '{{ $answer->letter }}' ? 'bg-green-400' : 'bg-gray-100'"
+                                        :class = "selectedAnswers.question{{ $question->id }} == {{ $answer->id }} ? 'bg-blue-400' : 'bg-gray-100'"
                                         >
                                             <div class="px-2 py-2 rounded text-center bg-white break-all h-full">{{ $answer->description }}</div>
                                         </div>
@@ -217,8 +263,8 @@ $submit = function ()  {
                 </div>
                 <div x-show = "n < {{ $questions->count() }} -1">
                     <a
-                        x-on:click="n++"
-                        class="bg-blue-500 text-white text-xl font-bold uppercase px-12 py-2 rounded-lg">
+                        x-on:click="n++; tabReset=''"
+                        class="bg-blue-500 text-white text-xl font-bold uppercase px-12 py-2 rounded-lg cursor-pointer select-none">
                         Next
                     </a>
                 </div>

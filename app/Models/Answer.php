@@ -21,4 +21,14 @@ class Answer extends Model
     {
         return $this->belongsTo(Question::class, 'question_id');
     }
+
+    /**
+     * Get all of the examinee_answers for the Answer
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function examinee_answers(): HasMany
+    {
+        return $this->hasMany(ExamineeAnswer::class);
+    }
 }
