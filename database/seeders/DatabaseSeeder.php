@@ -40,11 +40,12 @@ class DatabaseSeeder extends Seeder
             'Mathematics', 
             'English', 
             'Science'
-        ]; 
+        ];
+
         foreach($subjects as $subject) {
             $category = \App\Models\Category::factory()
             ->has(
-                \App\Models\Question::factory(['grade_level' => 7])->count(3)
+                \App\Models\Question::factory(['grade_level' => 7])->count(5)
                 ->has(
                     \App\Models\Answer::factory()->count(4)
                     ->sequence(
@@ -54,14 +55,14 @@ class DatabaseSeeder extends Seeder
                         ['letter' => 'D', 'is_correct' => false],
                     )
                 )
-                ->sequence(
-                    ['description' =>  "$subject question 1"],
-                    ['description' => "$subject question 2"],
-                    ['description' => "$subject question 3"],
-                )
+                // ->sequence(
+                //     ['description' =>  "$subject question 1"],
+                //     ['description' => "$subject question 2"],
+                //     ['description' => "$subject question 3"],
+                // )
             )
             ->has(
-                \App\Models\Question::factory(['grade_level' => 11])->count(2)
+                \App\Models\Question::factory(['grade_level' => 11])->count(5)
                 ->has(
                     \App\Models\Answer::factory()->count(4)
                     ->sequence(
@@ -71,43 +72,15 @@ class DatabaseSeeder extends Seeder
                         ['letter' => 'D', 'is_correct' => false],
                     )
                 )
-                ->sequence(
-                    ['description' =>  "$subject question 1"],
-                    ['description' => "$subject question 2"],
-                    ['description' => "$subject question 3"],
-                )
+                // ->sequence(
+                //     ['description' =>  "$subject question 1"],
+                //     ['description' => "$subject question 2"],
+                //     ['description' => "$subject question 3"],
+                // )
             )
             ->create([
                 'title' => $subject,
             ]);
-            
-
-            // $category->questions->factory()->count(5)
-            // ->has(
-            //     \App\Models\Answer::factory()->count(4)
-            //     ->sequence(
-            //         ['letter' => 'A', 'is_correct' => true],
-            //         ['letter' => 'B', 'is_correct' => false],
-            //         ['letter' => 'C', 'is_correct' => false],
-            //         ['letter' => 'D', 'is_correct' => false],
-            //     )
-            // )->create([
-            //     'grade_level' => 7
-            // ]);
-
-            // $category->questions->factory()->count(5)
-            // ->has(
-            //     \App\Models\Answer::factory()->count(4)
-            //     ->sequence(
-            //         ['letter' => 'A', 'is_correct' => true],
-            //         ['letter' => 'B', 'is_correct' => false],
-            //         ['letter' => 'C', 'is_correct' => false],
-            //         ['letter' => 'D', 'is_correct' => false],
-            //     )
-            // )->create([
-            //     'grade_level' => 11
-            // ]);
-
         }
     }
 }

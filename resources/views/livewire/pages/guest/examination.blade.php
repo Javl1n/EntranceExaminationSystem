@@ -66,15 +66,6 @@ $submit = function ()  {
             'answer_id' => $value
         ]);
     }
-    // $correctCount = 0;
-
-    // foreach ($this->examinee->answers as $input) {
-    //     if ($input->answer->is_correct) {
-    //         $correctCount++;
-    //     }
-    // }
-    
-    // ddd($correctCount);
     
     return $this->redirectRoute('examinees.result', ['examinee' => $this->examinee->id], navigate: true);
 };
@@ -186,7 +177,14 @@ $submit = function ()  {
         </div>
         
             @foreach ($questions as $question)  
-                <div x-show="{{ $question->id }} === order[n]">
+                <div x-show="{{ $question->id }} === order[n]"
+                    x-transition:enter="transition ease-in-out duration-400"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    {{-- x-transition:leave="duration-0"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0" --}}
+                    >
                     @php
                         $categoryColor = '';
 
