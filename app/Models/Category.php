@@ -19,4 +19,14 @@ class Category extends Model
     {
         return $this->hasMany(Question::class);
     }
+
+    /**
+     * Get all of the scores for the Category
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function scores(): HasMany
+    {
+        return $this->hasMany(ExamineeScore::class);
+    }
 }

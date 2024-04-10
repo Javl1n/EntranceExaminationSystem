@@ -39,6 +39,10 @@ mount(function () {
 });
 
 ?>
-<div class="min-h-screen flex justify-center bg-gray-100">
+<div class=" bg-gray-100">
+    <div class="pt-24 mb-10">
+        <h1 class="font-bold text-3xl text-center">Your Result</h1>
+    </div>
     @livewire('guest.result.scores', ['examinee' => $this->examinee, 'questions' => $this->questions])
+    @livewire('guest.result.answers', ['examinee' => $this->examinee, 'questions' => $this->questions])
 </div>

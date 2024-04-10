@@ -20,6 +20,9 @@ state([
 
 mount(function () {
     $this->examinee = Examinee::findOrFail($this->examinee);
+    if($this->examinee->answered) {
+        return $this->redirectRoute('examinees.result', ['examinee' => $this->examinee->id], navigate: true);
+    }
     $this->questions = Question::with(['category', 'answers' => function (Builder $query) {
         $query->orderBy('letter');
     }])->where('grade_level', $this->examinee->grade_level)->get();
@@ -59,13 +62,16 @@ $selectAnswers = function ($question, $letter) {
 
 
 $submit = function ()  {
-    $this->examinee->answers()->delete();
+    // $this->examinee->answers()->delete();
     foreach ($this->selectedAnswers as $key => $value) {
         $this->examinee->answers()->create([
             'question_id' => $key,
             'answer_id' => $value
         ]);
     }
+    $this->examinee->update([
+        'answered' => 1
+    ]);
     
     return $this->redirectRoute('examinees.result', ['examinee' => $this->examinee->id], navigate: true);
 };

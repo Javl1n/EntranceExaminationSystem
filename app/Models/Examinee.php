@@ -11,7 +11,7 @@ class Examinee extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'contact', 'grade_level'];
+    protected $guarded= [];
 
     /**
      * Get all of the answers for the Examinee
@@ -21,5 +21,15 @@ class Examinee extends Model
     public function answers(): HasMany
     {
         return $this->hasMany(ExamineeAnswer::class);
+    }
+
+    /**
+     * Get all of the scores for the Examinee
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function scores(): HasMany
+    {
+        return $this->hasMany(ExamineeScore::class);
     }
 }

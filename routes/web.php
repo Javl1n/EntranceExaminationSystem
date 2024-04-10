@@ -15,6 +15,8 @@ use Livewire\Volt\Volt;
 |
 */
 
+Route::redirect('/posts', '/');
+
 Route::view('/', 'welcome')->name('welcome');
 
 Route::view('dashboard', 'dashboard')
@@ -31,7 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['guest'])->group(function () {
     Volt::route('/exam/fillout', 'pages.guest.register')->name('examinees.create');
-    Volt::route('/exam/{examinee}', 'pages.guest.examination')->name('examinees.startExam');
+    Volt::route('/exam/{examinee:id}', 'pages.guest.examination')->name('examinees.startExam');
     Volt::route('/exam/{examinee}/result', 'pages.guest.result')->name('examinees.result');
 });
 

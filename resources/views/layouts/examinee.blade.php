@@ -20,6 +20,8 @@
             <x-application-logo class="w-10" />
             <div class="font-bold text-xl my-auto">SLSPI</div>
         </a>
-        {{ $slot }}
+        <div class="min-h-screen">
+            {{ $slot }}
+        </div>
     </body>
 </html>

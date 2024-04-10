@@ -1,6 +1,6 @@
 <?php
 
-use function Livewire\Volt\{state, computed, mount};
+use function Livewire\Volt\{state, computed};
 
 state([
     'examinee',
@@ -16,6 +16,7 @@ $englishQuestionCount = computed(function () {
             $count++;
         }
     }
+
     return $count;
 });
 
@@ -39,7 +40,6 @@ $scienceQuestionCount = computed(function () {
     return $count;
 });
 
-
 // scores
 $englishScore = computed(function () {
     $count = 0;
@@ -50,6 +50,12 @@ $englishScore = computed(function () {
             }
         }
     }
+    $this->examinee->scores()->firstOrCreate([
+        'score' => $count,
+        'total' => $this->englishQuestionCount,
+        'category_id' => 2
+    ]);
+
     $percent = round(($count / $this->englishQuestionCount) * 100, 1);
     return ['total' => $this->englishQuestionCount, 'percent' => $percent, 'sum' => $count];
 });
@@ -63,6 +69,11 @@ $scienceScore = computed(function () {
             }
         }
     }
+    $this->examinee->scores()->firstOrCreate([
+        'score' => $count,
+        'total' => $this->scienceQuestionCount,
+        'category_id' => 3
+    ]);
     $percent = round(($count / $this->scienceQuestionCount) * 100, 1);
     return ['total' => $this->scienceQuestionCount, 'percent' => $percent, 'sum' => $count];
 });
@@ -76,6 +87,11 @@ $mathematicsScore = computed(function () {
             }
         }
     }
+    $this->examinee->scores()->firstOrCreate([
+        'score' => $count,
+        'total' => $this->mathematicsQuestionCount,
+        'category_id' => 1
+    ]);
     $percent = round(($count / $this->mathematicsQuestionCount) * 100, 1);
     return ['total' => $this->mathematicsQuestionCount, 'percent' => $percent, 'sum' => $count];
 });
@@ -97,6 +113,8 @@ $average = computed(function () {
 $section = computed(function () {
     $average = $this->average['percent'];
     // $average = 99;
+    // if(){}
+
     return match (true) {
         $average < 70 => 'D - Deutoronomy',
         $average < 80 => 'C - Leviticus',
@@ -141,49 +159,46 @@ $strand = computed(function() {
 
 ?>
 
-<div class="pt-24 w-2/4  overflow-scroll">
-    <h1 class="font-bold text-3xl text-center">Your Result</h1>
-    <div class="mt-10 flex gap-10 bg-white justify-center py-8 px-10 rounded-lg shadow-lg">
-        <div class="bg-blue-300 h-52 w-52 aspect-square rounded-full text-center flex flex-col gap-2 justify-center my-auto">
-            <div class="text-white font-bold">Average</div>
-            <h1 class="text-white font-extrabold text-6xl">{{ $this->average['percent'] }}%</h1>
-            <div class="text-white font-bold"><span class="font-bold">{{ $this->average['sum'] }}</span> out of {{ $this->average['total'] }}</div>
+<div class="w-2/4 mx-auto shadow flex gap-10 bg-white justify-center py-8 px-10 rounded-lg">
+    <div class="bg-gradient-to-bl from-30% from-blue-500 to-indigo-200 h-52 w-52 aspect-square rounded-full text-center flex flex-col gap-2 justify-center my-auto">
+        <div class="text-white font-bold">Average</div>
+        <h1 class="text-white font-extrabold text-6xl">{{ $this->average['percent'] }}%</h1>
+        <div class="text-white font-bold"><span class="font-bold">{{ $this->average['sum'] }}</span> out of {{ $this->average['total'] }}</div>
+    </div>
+    <div class="flex-1 flex flex-col">
+        <div class="flex gap-4">
+            <h4 class="mt-auto">{{ match ($examinee->grade_level) {
+                11 => 'Strand',
+                7 => 'Section',
+            } }} :</h4>
+            <h1 class="text-4xl mt-2 font-extrabold">{{ 
+                match($this->examinee->grade_level) {
+                    11 => $this->strand,
+                    7 => $this->section
+                } 
+            }}</h1>
         </div>
-        <div class="flex-1 flex flex-col">
-            <div class="flex gap-4">
-                <h4 class="mt-auto">{{ match ($examinee->grade_level) {
-                    11 => 'Strand',
-                    7 => 'Section',
-                } }} :</h4>
-                <h1 class="text-4xl mt-2 font-extrabold">{{ 
-                    match($this->examinee->grade_level) {
-                        11 => $this->strand,
-                        7 => $this->section
-                    } 
-                }}</h1>
+        <div class="flex-1 flex justify-between gap-2 mt-4">
+            <div class = 'bg-gradient-to-b from-30% from-yellow-400 to-yellow-200 h-36 w-36 text-center flex flex-col gap-2 text-white justify-center rounded-xl'>
+                <h1 class="text-center text-sm">English</h1>
+                <h1 class="text-4xl font-bold">
+                    {{ $this->englishScore['percent'] }}%
+                </h1>
+                <h1 class="text-center text-sm"><span class="font-bold">{{ $this->englishScore['sum'] }}</span> out of {{ $this->englishScore['total'] }}</h1>
             </div>
-            <div class="flex-1 flex justify-between gap-2 mt-4">
-                <div class="bg-yellow-400 h-36 w-36 text-center flex flex-col gap-2 text-white justify-center rounded-xl">
-                    <h1 class="text-center text-sm">English</h1>
-                    <h1 class="text-4xl font-bold">
-                        {{ $this->englishScore['percent'] }}%
-                    </h1>
-                    <h1 class="text-center text-sm"><span class="font-bold">{{ $this->englishScore['sum'] }}</span> out of {{ $this->englishScore['total'] }}</h1>
-                </div>
-                <div class="bg-purple-500 h-36 w-36 text-center flex flex-col gap-2 text-white justify-center rounded-xl">
-                    <h1 class="text-center text-sm">Science</h1>
-                    <h1 class="text-4xl font-bold">
-                        {{ $this->scienceScore['percent'] }}%
-                    </h1>
-                    <h1 class="text-center text-sm"><span class="font-bold">{{ $this->scienceScore['sum'] }}</span> out of {{ $this->scienceScore['total'] }}</h1>
-                </div>
-                <div class="bg-red-500 h-36 w-36 text-center flex flex-col gap-2 text-white justify-center rounded-xl">
-                    <h1 class="text-center text-sm">Mathematics</h1>
-                    <h1 class="text-4xl font-bold">
-                        {{ $this->mathematicsScore['percent'] }}%
-                    </h1>
-                    <h1 class="text-center text-sm"><span class="font-bold">{{ $this->mathematicsScore['sum'] }}</span> out of {{ $this->mathematicsScore['total'] }}</h1>
-                </div>
+            <div class="bg-gradient-to-br from-10% from-purple-500 to-violet-300 h-36 w-36 text-center flex flex-col gap-2 text-white justify-center rounded-xl">
+                <h1 class="text-center text-sm">Science</h1>
+                <h1 class="text-4xl font-bold">
+                    {{ $this->scienceScore['percent'] }}%
+                </h1>
+                <h1 class="text-center text-sm"><span class="font-bold">{{ $this->scienceScore['sum'] }}</span> out of {{ $this->scienceScore['total'] }}</h1>
+            </div>
+            <div class="bg-gradient-to-br from-30% from-red-500 to-red-300 h-36 w-36 text-center flex flex-col gap-2 text-white justify-center rounded-xl">
+                <h1 class="text-center text-sm">Mathematics</h1>
+                <h1 class="text-4xl font-bold">
+                    {{ $this->mathematicsScore['percent'] }}%
+                </h1>
+                <h1 class="text-center text-sm"><span class="font-bold">{{ $this->mathematicsScore['sum'] }}</span> out of {{ $this->mathematicsScore['total'] }}</h1>
             </div>
         </div>
     </div>
