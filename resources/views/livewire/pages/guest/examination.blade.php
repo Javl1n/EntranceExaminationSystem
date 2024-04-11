@@ -57,13 +57,14 @@ $categoryColor = computed(function ($subject) {
 
 $selectAnswers = function ($question, $letter) {
     $this->selectedAnswers[$question] = $letter;
-    // ddd($this->selectedAnswers);
 };
 
 
 $submit = function ()  {
-    // $this->examinee->answers()->delete();
     foreach ($this->selectedAnswers as $key => $value) {
+        if($value === ''){
+            continue;
+        }
         $this->examinee->answers()->create([
             'question_id' => $key,
             'answer_id' => $value
@@ -78,7 +79,10 @@ $submit = function ()  {
 
 ?>
 
-<div class="min-h-screen flex justify-center bg-gray-100">
+<div class="min-h-screen flex justify-center bg-gray-100" x-data="timer(
+    new Date().setHours(new Date().getHours() + {{ $timer->hours }},
+    new Date().getMinutes() + {{ $timer->minutes }}, 
+    new Date().getSeconds() + {{ $timer->seconds }}))" x-init="init();">
     <div 
     class="pt-24 w-2/4  overflow-scroll"  
     x-data="{
@@ -121,21 +125,27 @@ $submit = function ()  {
             <div x-text="tabReset" class="text-red-500">
 
             </div>
-            <div x-data="timer(
-                new Date().setHours(new Date().getHours() + {{ $timer->hours }},
-                new Date().getMinutes() + {{ $timer->minutes }}, 
-                new Date().getSeconds() + {{ $timer->seconds }}))" x-init="init();">
+            <div>
             {{-- <div x-data="" x-init="init();"> --}}
-                Time Left: <span x-text="time().hours"></span> : <span x-text="time().minutes"></span> : <span x-text="time().seconds"></span>
+                Time Left: 
+                    <span x-show="hours().value > 0 || minutes().value > 0 || seconds().value > 0">
+                        <span x-text="time().hours"></span> : 
+                        <span x-text="time().minutes"></span> : 
+                        <span x-text="time().seconds"></span>
+                    </span>
+                    <span x-show="hours().value <= 0 || minutes().value <= 0 || seconds().value <= 0">
+                        00 : 00 : 00
+                    </span>
             </div>
             <script>
                 function timer(expiry) {
                     return {
                         expiry: expiry,
                         remaining:null,
+                        interval:null,
                         init() {
                             this.setRemaining()
-                            setInterval(() => {
+                            this.interval = setInterval(() => {
                                 this.setRemaining();
                             }, 1000);
                         },
@@ -167,7 +177,7 @@ $submit = function ()  {
                             };
                         },
                         format(value) {
-                            return ("0" + parseInt(value)).slice(-2)
+                            return ("0" + parseInt(value)).slice(-3)
                         },
                         time(){
                             return {
@@ -180,73 +190,80 @@ $submit = function ()  {
                     }
                 }
             </script>
-        </div>
-        
-            @foreach ($questions as $question)  
-                <div x-show="{{ $question->id }} === order[n]"
-                    x-transition:enter="transition ease-in-out duration-400"
-                    x-transition:enter-start="opacity-0"
-                    x-transition:enter-end="opacity-100"
-                    {{-- x-transition:leave="duration-0"
-                    x-transition:leave-start="opacity-100"
-                    x-transition:leave-end="opacity-0" --}}
-                    >
-                    @php
-                        $categoryColor = '';
-
-                        switch ($question->category->id) {
-                            case 1:
-                                $categoryColor = 'bg-red-400';
-                                break;
-                            case 2:
-                                $categoryColor = 'bg-yellow-400';
-                                break;
-                            case 3:
-                                $categoryColor = 'bg-purple-400';
-                                break;
-                            default:
-                                $categoryColor = '';
-                                break;
-                        }
-                    @endphp
-                    <div class="">
-                        <div class="absolute rounded-lg {{ $categoryColor }}  mt-4 ms-3  px-5 text-sm text-white font-bold">
-                            {{ $question->category->title }}
-                        </div>
-                        <div class="w-full bg-white rounded-lg py-10 px-12 shadow-md mt-4">
-                            <h1 class="text-center text-2xl mt-4">
-                                {{ $question->description }}
-                            </h1>
-                            <div class="mt-10 grid grid-cols-2 grid-rows-2 gap-5" x-data="{
-                                selectAnswer (letter) {
-                                    selectedAnswers.question{{ $question->id }} = letter;
-                                    console.log(selectedAnswers.question{{ $question->id }});
-                                }
-                            }">
-                                @foreach ($question->answers as $answer)
-                                    <div class="flex">
-                                        <div class="flex flex-col">
-                                            <div 
-                                            x-on:click="selectAnswer({{ $answer->id }})" 
-                                            class="w-14 rounded-l text-center py-4 font-bold transition ease-in-out"
-                                            :class = "selectedAnswers.question{{ $question->id }} == {{ $answer->id }} ? 'bg-blue-400 text-white' : 'bg-gray-100'"
-                                            >{{ $answer->letter }}</div>
+        </div>        
+            <div x-show="hours().value > 0 || minutes().value > 0 || seconds().value > 0">
+                @foreach ($questions as $question)
+                    <div x-show="{{ $question->id }} === order[n]"
+                        x-transition:enter="transition ease-in-out duration-400"
+                        x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100"
+                        {{-- x-transition:leave="duration-0"
+                        x-transition:leave-start="opacity-100"
+                        x-transition:leave-end="opacity-0" --}}
+                        >
+                        @php
+                            $categoryColor = '';
+                            switch ($question->category->id) {
+                                case 1:
+                                    $categoryColor = 'bg-red-400';
+                                    break;
+                                case 2:
+                                    $categoryColor = 'bg-yellow-400';
+                                    break;
+                                case 3:
+                                    $categoryColor = 'bg-purple-400';
+                                    break;
+                                default:
+                                    $categoryColor = '';
+                                    break;
+                            }
+                        @endphp
+                        <div class="">
+                            <div class="absolute rounded-lg {{ $categoryColor }}  mt-4 ms-3  px-5 text-sm text-white font-bold">
+                                {{ $question->category->title }}
+                            </div>
+                            <div class="w-full bg-white rounded-lg py-10 px-12 shadow-md mt-4">
+                                <h1 class="text-center text-2xl mt-4">
+                                    {{ $question->description }}
+                                </h1>
+                                <div class="mt-10 grid grid-cols-2 grid-rows-2 gap-5" x-data="{
+                                    selectAnswer (letter) {
+                                        selectedAnswers.question{{ $question->id }} = letter;
+                                        console.log(selectedAnswers.question{{ $question->id }});
+                                    }
+                                }">
+                                    @foreach ($question->answers as $answer)
+                                        <div class="flex">
+                                            <div class="flex flex-col">
+                                                <div
+                                                x-on:click="selectAnswer({{ $answer->id }})"
+                                                class="w-14 rounded-l text-center py-4 font-bold transition ease-in-out"
+                                                :class = "selectedAnswers.question{{ $question->id }} == {{ $answer->id }} ? 'bg-blue-400 text-white' : 'bg-gray-100'"
+                                                >{{ $answer->letter }}</div>
+                                            </div>
+                                            <div
+                                            class="py-2 px-2 flex-1 rounded-r transition ease-in-out"
+                                            :class = "selectedAnswers.question{{ $question->id }} == {{ $answer->id }} ? 'bg-blue-400' : 'bg-gray-100'"
+                                            >
+                                                <div class="px-2 py-2 rounded text-center bg-white break-all h-full">{{ $answer->description }}</div>
+                                            </div>
                                         </div>
-                                        <div 
-                                        class="py-2 px-2 flex-1 rounded-r transition ease-in-out"
-                                        :class = "selectedAnswers.question{{ $question->id }} == {{ $answer->id }} ? 'bg-blue-400' : 'bg-gray-100'"
-                                        >
-                                            <div class="px-2 py-2 rounded text-center bg-white break-all h-full">{{ $answer->description }}</div>
-                                        </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+            <div 
+            x-show="hours().value <= 0 || minutes().value <= 0 || seconds().value <= 0" 
+            class="w-full bg-white rounded-lg h-80 shadow-md mt-4 flex flex-col justify-center">
+                <h1 class="text-center text-4xl font-bold">
+                    Time's Up!
+                </h1>
+            </div>
             <div class="mt-12 flex justify-center">
-                <div x-show = "n >= {{ $questions->count() }} -1">
+                <div x-show = "n >= {{ $questions->count() }} -1 || hours().value <= 0 || minutes().value <= 0 || seconds().value <= 0">
                     <button
                         x-data = "{
                             submit () {
@@ -261,14 +278,15 @@ $submit = function ()  {
                         Finish
                     </button>
                 </div>
-                <div x-show = "n < {{ $questions->count() }} -1">
-                    <a
-                        x-on:click="n++; tabReset=''"
-                        class="bg-blue-500 text-white text-xl font-bold uppercase px-12 py-2 rounded-lg cursor-pointer select-none">
-                        Next
-                    </a>
+                <div x-show="hours().value > 0 || minutes().value > 0 || seconds().value > 0" >
+                    <div x-show = "n < {{ $questions->count() }} -1">
+                        <a
+                            x-on:click="n++; tabReset=''"
+                            class="bg-blue-500 text-white text-xl font-bold uppercase px-12 py-2 rounded-lg cursor-pointer select-none">
+                            Next
+                        </a>
+                    </div>
                 </div>
             </div>
-            
     </div>
 </div>

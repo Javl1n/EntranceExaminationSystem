@@ -25,7 +25,7 @@ $grade11 = fn () => $this->grade = 11;
 
 $register = function () {
     $this->validate();
-    $examinee = Examinee::create([
+    $examinee = Examinee::firstOrCreate([
         'name' => $this->name,
         'contact' => $this->contact,
         'grade_level' => $this->grade, 
