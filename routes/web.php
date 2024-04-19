@@ -28,11 +28,12 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Volt::route('/exams/index', 'pages.exam.index')->name('exams.index');
+    Volt::route('/exams', 'pages.exam.index')->name('exams.index');
+    Volt::route('/examinees', 'pages.examinees.index')->name('examinees.index');
 });
 
 Route::middleware(['guest'])->group(function () {
-    Volt::route('/exam/fillout', 'pages.guest.register')->name('examinees.create');
+    Volt::route('/exam', 'pages.guest.register')->name('examinees.create');
     Volt::route('/exam/{examinee:id}', 'pages.guest.examination')->name('examinees.startExam');
     Volt::route('/exam/{examinee}/result', 'pages.guest.result')->name('examinees.result');
 });

@@ -22,65 +22,9 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('admin123')
         ]);
         
-        \App\Models\Timer::create([
-            'grade' => 7,
-            'hours' => 1,
-            'minutes' => 30,
-            'seconds' => 0
+        $this->call([
+            ExamSeeder::class,
+            SectionStrandSeeder::class,
         ]);
-
-        \App\Models\Timer::create([
-            'grade' => 11,
-            'hours' => 1,
-            'minutes' => 0,
-            'seconds' => 0
-        ]);
-
-        $subjects = [
-            'Mathematics', 
-            'English', 
-            'Science'
-        ];
-
-        foreach($subjects as $subject) {
-            $category = \App\Models\Category::factory()
-            ->has(
-                \App\Models\Question::factory(['grade_level' => 7])->count(5)
-                ->has(
-                    \App\Models\Answer::factory()->count(4)
-                    ->sequence(
-                        ['letter' => 'A', 'is_correct' => true],
-                        ['letter' => 'B', 'is_correct' => false],
-                        ['letter' => 'C', 'is_correct' => false],
-                        ['letter' => 'D', 'is_correct' => false],
-                    )
-                )
-                // ->sequence(
-                //     ['description' =>  "$subject question 1"],
-                //     ['description' => "$subject question 2"],
-                //     ['description' => "$subject question 3"],
-                // )
-            )
-            ->has(
-                \App\Models\Question::factory(['grade_level' => 11])->count(5)
-                ->has(
-                    \App\Models\Answer::factory()->count(4)
-                    ->sequence(
-                        ['letter' => 'A', 'is_correct' => true],
-                        ['letter' => 'B', 'is_correct' => false],
-                        ['letter' => 'C', 'is_correct' => false],
-                        ['letter' => 'D', 'is_correct' => false],
-                    )
-                )
-                // ->sequence(
-                //     ['description' =>  "$subject question 1"],
-                //     ['description' => "$subject question 2"],
-                //     ['description' => "$subject question 3"],
-                // )
-            )
-            ->create([
-                'title' => $subject,
-            ]);
-        }
     }
 }

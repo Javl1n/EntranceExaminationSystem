@@ -177,7 +177,7 @@ $submit = function ()  {
                             };
                         },
                         format(value) {
-                            return ("0" + parseInt(value)).slice(-3)
+                            return ("0" + parseInt(value)).slice(-2)
                         },
                         time(){
                             return {

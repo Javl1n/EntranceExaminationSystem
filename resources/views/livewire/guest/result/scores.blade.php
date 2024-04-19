@@ -108,53 +108,49 @@ $average = computed(function () {
     return ['total' => $this->questions->count(), 'percent' => $percent, 'sum' => $sum];
 });
 
+$assignment = computed(function () {
+    if($this->examinee->grade_level === 7) {
+        $average = $this->average['percent'];
+        $section = match (true) {
+            $average < 70 => 'D - Deutoronomy',
+            $average < 80 => 'C - Leviticus',
+            $average < 90 => 'B - Exodus',
+            $average <=100 => 'A - Genesis',
+        };
+        $assignment = ['grade' => "Section", 'place' => $section];
+    } else if ($this->examinee->grade_level === 11) {
+        $score['science'] = $this->scienceScore['percent'];
+        $score['english'] = $this->englishScore['percent'];
+        $score['mathematics'] = $this->mathematicsScore['percent'];
 
-// sectioning and strand recommendation 
-$section = computed(function () {
-    $average = $this->average['percent'];
-    // $average = 99;
-    // if(){}
+        // $score['science'] = 14;
+        // $score['english'] = 3;
+        // $score['mathematics'] = 20;
 
-    return match (true) {
-        $average < 70 => 'D - Deutoronomy',
-        $average < 80 => 'C - Leviticus',
-        $average < 90 => 'B - Exodus',
-        $average <=100 => 'A - Genesis',
-    };
-});
+        arsort($score);
 
-$strand = computed(function() {
-
-    $score['science'] = $this->scienceScore['percent'];
-    $score['english'] = $this->englishScore['percent'];
-    $score['mathematics'] = $this->mathematicsScore['percent'];
-
-    // $score['science'] = 14;
-    // $score['english'] = 3;
-    // $score['mathematics'] = 20;
-
-    arsort($score);
-
-    $subjects = array_keys($score);
-    $value = match ($subjects[0]) {
-        'mathematics' => 
-            match ($subjects[1]) {
-                'science' => 'STEM',
-                'english' => 'ABM'
-            },
-        'science' => 
-            match ($subjects[1]) {
-                    'mathematics' => 'STEM',
-                    'english' => 'HUMSS',
-            },
-        'english' => 
-            match ($subjects[1]) {
-                'mathematics' => 'ABM',
-                'science' => 'HUMSS',
-            },
-    };
-    
-    return $value;
+        $subjects = array_keys($score);
+        $value = match ($subjects[0]) {
+            'mathematics' => 
+                match ($subjects[1]) {
+                    'science' => 'STEM',
+                    'english' => 'ABM'
+                },
+            'science' => 
+                match ($subjects[1]) {
+                        'mathematics' => 'STEM',
+                        'english' => 'HUMSS',
+                },
+            'english' => 
+                match ($subjects[1]) {
+                    'mathematics' => 'ABM',
+                    'science' => 'HUMSS',
+                },
+        };
+        
+        $assignment = ['grade' => "Strand", "place" => $value];
+    }
+    return $assignment;
 });
 
 ?>
@@ -167,15 +163,9 @@ $strand = computed(function() {
     </div>
     <div class="flex-1 flex flex-col">
         <div class="flex gap-4">
-            <h4 class="mt-auto">{{ match ($examinee->grade_level) {
-                11 => 'Strand',
-                7 => 'Section',
-            } }} :</h4>
+            <h4 class="mt-auto">{{ $this->assignment['grade'] }} :</h4>
             <h1 class="text-4xl mt-2 font-extrabold">{{ 
-                match($this->examinee->grade_level) {
-                    11 => $this->strand,
-                    7 => $this->section
-                } 
+                $this->assignment['place']
             }}</h1>
         </div>
         <div class="flex-1 flex justify-between gap-2 mt-4">
