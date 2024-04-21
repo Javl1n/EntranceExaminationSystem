@@ -14,13 +14,8 @@ class SectionStrandSeeder extends Seeder
     {
         // Sections
         \App\Models\Section::create([
-            'letter' => 'D',
-            'description' => 'Deutoronomy'
-        ]);
-
-        \App\Models\Section::create([
-            'letter' => 'C',
-            'description' => 'Leviticus'
+            'letter' => 'A',
+            'description' => 'Genesis'
         ]);
 
         \App\Models\Section::create([
@@ -29,10 +24,14 @@ class SectionStrandSeeder extends Seeder
         ]);
 
         \App\Models\Section::create([
-            'letter' => 'A',
-            'description' => 'Genesis'
+            'letter' => 'C',
+            'description' => 'Leviticus'
         ]);
 
+        \App\Models\Section::create([
+            'letter' => 'D',
+            'description' => 'Deutoronomy'
+        ]);
 
         // Strands
         \App\Models\Strand::create([

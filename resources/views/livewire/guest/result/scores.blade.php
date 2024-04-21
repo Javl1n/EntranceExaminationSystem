@@ -111,13 +111,19 @@ $average = computed(function () {
 $assignment = computed(function () {
     if($this->examinee->grade_level === 7) {
         $average = $this->average['percent'];
-        $section = match (true) {
-            $average < 70 => 'D - Deutoronomy',
-            $average < 80 => 'C - Leviticus',
-            $average < 90 => 'B - Exodus',
-            $average <=100 => 'A - Genesis',
-        };
-        $assignment = ['grade' => "Section", 'place' => $section];
+        
+
+        $section = $this->examinee->sectionPivot()->firstOrCreate([
+            'section_id' => match(true) {
+                $average < 70 => 4,
+                $average < 80 => 3,
+                $average < 90 => 2,
+                $average <=100 => 1,
+            }
+        ])->section;
+
+
+        $assignment = ['grade' => "Section", 'place' => $section->letter . ' - ' . $section->description];
     } else if ($this->examinee->grade_level === 11) {
         $score['science'] = $this->scienceScore['percent'];
         $score['english'] = $this->englishScore['percent'];
@@ -130,25 +136,71 @@ $assignment = computed(function () {
         arsort($score);
 
         $subjects = array_keys($score);
-        $value = match ($subjects[0]) {
-            'mathematics' => 
-                match ($subjects[1]) {
-                    'science' => 'STEM',
-                    'english' => 'ABM'
-                },
-            'science' => 
-                match ($subjects[1]) {
-                        'mathematics' => 'STEM',
-                        'english' => 'HUMSS',
-                },
-            'english' => 
-                match ($subjects[1]) {
-                    'mathematics' => 'ABM',
-                    'science' => 'HUMSS',
-                },
-        };
         
-        $assignment = ['grade' => "Strand", "place" => $value];
+        $strand = $this->examinee->strandRecommendations()->firstOrCreate([
+            'ranking' => 1,
+            'strand_id' => match ($subjects[0]) {
+                'mathematics' => 
+                    match ($subjects[1]) {
+                        'science' => 1,
+                        'english' => 2
+                    },
+                'science' => 
+                    match ($subjects[1]) {
+                            'mathematics' => 1,
+                            'english' => 3,
+                    },
+                'english' => 
+                    match ($subjects[1]) {
+                        'mathematics' => 2,
+                        'science' => 3,
+                    },
+            },
+        ])->strand;
+
+        $this->examinee->strandRecommendations()->firstOrCreate([
+            'ranking' => 2,
+            'strand_id' => match ($subjects[0]) {
+                'mathematics' => 
+                    match ($subjects[2]) {
+                        'science' => 1,
+                        'english' => 2
+                    },
+                'science' => 
+                    match ($subjects[2]) {
+                            'mathematics' => 1,
+                            'english' => 3,
+                    },
+                'english' => 
+                    match ($subjects[2]) {
+                        'mathematics' => 2,
+                        'science' => 3,
+                    },
+            },
+        ]);
+
+        $this->examinee->strandRecommendations()->firstOrCreate([
+            'ranking' => 3,
+            'strand_id' => match ($subjects[1]) {
+                'mathematics' => 
+                    match ($subjects[2]) {
+                        'science' => 1,
+                        'english' => 2
+                    },
+                'science' => 
+                    match ($subjects[2]) {
+                            'mathematics' => 1,
+                            'english' => 3,
+                    },
+                'english' => 
+                    match ($subjects[2]) {
+                        'mathematics' => 2,
+                        'science' => 3,
+                    },
+            },
+        ]);
+        
+        $assignment = ['grade' => "Strand", "place" => $strand->title];
     }
     return $assignment;
 });
