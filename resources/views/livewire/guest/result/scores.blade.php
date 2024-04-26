@@ -2,9 +2,13 @@
 
 use function Livewire\Volt\{state, computed};
 
+use Illuminate\Support\Facades\Validator;
+use App\Models\User;
+
 state([
     'examinee',
-    'questions'
+    'questions',
+    'password'
 ]);
 
 
@@ -219,6 +223,30 @@ $assignment = computed(function () {
     }
 });
 
+$retake = function () {
+    $this->validate([
+        'password' => [
+            'required', 
+            'string',
+            function (string $attribute, mixed $value, Closure $fail) {
+                if(!Hash::check($value, User::where('email', 'farmodia@gmail.com')->first()->password)){
+                    $fail("Invalid password.");
+                }
+            }
+        ],
+    ]);
+
+    $this->examinee->answers()->delete();
+    $this->examinee->scores()->delete();
+    $this->examinee->sectionPivot()->delete();
+    $this->examinee->strandRecommendations()->delete();
+    $this->examinee->update([
+        'answered' => false
+    ]);
+
+    $this->redirect(route('examinees.startExam', ['examinee' => $this->examinee]), navigate: true);
+}
+
 ?>
 
 <div>
@@ -227,6 +255,13 @@ $assignment = computed(function () {
             <span class="text-lg">Name: <span class="font-bold">{{ $examinee->name }}</span></span>
             <span class="text-lg">Grade Level: <span class="font-bold">{{ $examinee->grade_level }}</span></span>
         </div> --}}
+        {{-- @if ($this->average['percent'] < 75)
+            <div class="absolute max-w-3xl w-screen px-5 py-5">
+                <div class="flex justify-end">
+                    <h1 wire:click='$dispatch("open-modal", "confirm-examinee-retake")' class="text-xl font-extrabold text-red-600 cursor-pointer w-8 h-8 text-center hover:bg-gray-50 rounded-full"> ! </h1>
+                </div>
+            </div>
+        @endif --}}
         <div class="flex gap-10 py-8 px-10 justify-center">
             <div class="bg-gradient-to-bl from-30% from-blue-500 to-indigo-200 h-52 w-52 aspect-square rounded-full text-center flex flex-col gap-2 justify-center my-auto">
                 <div class="text-white font-bold">Average</div>
@@ -299,5 +334,35 @@ $assignment = computed(function () {
             </div>
         </div>
     @endif
+    <x-modal name="confirm-examinee-retake" :show="$errors->isNotEmpty()" maxWidth='md' focusable>
+        <form wire:submit="retake" class="p-6">
+            <h2 class="text-lg font-medium text-gray-900 text-center">
+                {{ __('Are you sure you want to retake the exam?') }}
+            </h2>
+            <p class="mt-1 text-sm text-gray-600 text-center">
+                {{ __("Please call upon the proctor to enter admin's password.") }}
+            </p>
+            <div class="mt-6">
+                <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
+                <x-text-input
+                    wire:model="password"
+                    id="password"
+                    name="password"
+                    type="password"
+                    class="mt-1 block w-5/6 mx-auto text-center"
+                    placeholder=""
+                />
+                <x-input-error :messages="$errors->get('password')" class="mt-2 text-center" />
+            </div>
+            <div class="mt-6 flex justify-center">
+                <x-secondary-button x-on:click="$dispatch('close')">
+                    {{ __('Cancel') }}
+                </x-secondary-button>
+                <x-danger-button class="ms-3">
+                    {{ __('Retake Exam') }}
+                </x-danger-button>
+            </div>
+        </form>
+    </x-modal>
 </div>
 
