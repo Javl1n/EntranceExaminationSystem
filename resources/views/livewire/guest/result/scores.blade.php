@@ -221,48 +221,83 @@ $assignment = computed(function () {
 
 ?>
 
-<div class="max-w-3xl mx-auto shadow bg-white  rounded-lg">
-    {{-- <div class="px-10 pt-2 text-gray-500 flex justify-between">
-        <span class="text-lg">Name: <span class="font-bold">{{ $examinee->name }}</span></span>
-        <span class="text-lg">Grade Level: <span class="font-bold">{{ $examinee->grade_level }}</span></span>
-    </div> --}}
-    <div class="flex gap-10 py-8 px-10 justify-center">
-        <div class="bg-gradient-to-bl from-30% from-blue-500 to-indigo-200 h-52 w-52 aspect-square rounded-full text-center flex flex-col gap-2 justify-center my-auto">
-            <div class="text-white font-bold">Average</div>
-            <h1 class="text-white font-extrabold text-6xl">{{ $this->average['percent'] }}%</h1>
-            <div class="text-white font-bold"><span class="font-bold">{{ $this->average['sum'] }}</span> out of {{ $this->average['total'] }}</div>
-        </div>
-        <div class="flex-1 flex flex-col">
-            <div class="flex gap-4">
-                <h4 class="mt-auto">{{ $this->assignment['grade'] }} :</h4>
-                <h1 class="text-4xl mt-2 font-extrabold">{{
-                    $this->assignment['place']
-                }}</h1>
+<div>
+    <div class="max-w-3xl mx-auto shadow bg-white  rounded-lg">
+        {{-- <div class="px-10 pt-2 text-gray-500 flex justify-between">
+            <span class="text-lg">Name: <span class="font-bold">{{ $examinee->name }}</span></span>
+            <span class="text-lg">Grade Level: <span class="font-bold">{{ $examinee->grade_level }}</span></span>
+        </div> --}}
+        <div class="flex gap-10 py-8 px-10 justify-center">
+            <div class="bg-gradient-to-bl from-30% from-blue-500 to-indigo-200 h-52 w-52 aspect-square rounded-full text-center flex flex-col gap-2 justify-center my-auto">
+                <div class="text-white font-bold">Average</div>
+                <h1 class="text-white font-extrabold text-6xl">{{ $this->average['percent'] }}%</h1>
+                <div class="text-white font-bold"><span class="font-bold">{{ $this->average['sum'] }}</span> out of {{ $this->average['total'] }}</div>
             </div>
-            <div class="flex-1 flex justify-between gap-2 mt-4">
-                <div class = 'bg-gradient-to-b from-30% from-yellow-400 to-yellow-200 h-36 w-full text-center flex flex-col gap-2 text-white justify-center rounded-xl'>
-                    <h1 class="text-center text-sm">English</h1>
-                    <h1 class="text-4xl font-bold">
-                        {{ $this->englishScore['percent'] }}%
-                    </h1>
-                    <h1 class="text-center text-sm"><span class="font-bold">{{ $this->englishScore['sum'] }}</span> out of {{ $this->englishScore['total'] }}</h1>
+            <div class="flex-1 flex flex-col">
+                <div class="flex gap-4">
+                    <h4 class="mt-auto">{{ $this->assignment['grade'] }} :</h4>
+                    <h1 class="text-4xl mt-2 font-extrabold">{{
+                        $this->assignment['place']
+                    }}</h1>
                 </div>
-                <div class="bg-gradient-to-br from-10% from-purple-500 to-violet-300 h-36 w-full text-center flex flex-col gap-2 text-white justify-center rounded-xl">
-                    <h1 class="text-center text-sm">Science</h1>
-                    <h1 class="text-4xl font-bold">
-                        {{ $this->scienceScore['percent'] }}%
-                    </h1>
-                    <h1 class="text-center text-sm"><span class="font-bold">{{ $this->scienceScore['sum'] }}</span> out of {{ $this->scienceScore['total'] }}</h1>
-                </div>
-                <div class="bg-gradient-to-br from-30% from-red-500 to-red-300 h-36 w-full text-center flex flex-col gap-2 text-white justify-center rounded-xl">
-                    <h1 class="text-center text-sm">Mathematics</h1>
-                    <h1 class="text-4xl font-bold">
-                        {{ $this->mathematicsScore['percent'] }}%
-                    </h1>
-                    <h1 class="text-center text-sm"><span class="font-bold">{{ $this->mathematicsScore['sum'] }}</span> out of {{ $this->mathematicsScore['total'] }}</h1>
+                @if($examinee->grade_level === 11)
+                    <div class="flex gap-2">
+                        <div>Description: </div>
+                        <span class="font-bold">{{ $examinee->strandRecommendations->where('ranking', 1)->first()->strand->description }}</span>
+                    </div>
+                @endif
+                <div class="flex-1 flex justify-between gap-2 mt-4">
+                    <div class = 'bg-gradient-to-b from-30% from-yellow-400 to-yellow-200 h-36 w-full text-center flex flex-col gap-2 text-white justify-center rounded-xl'>
+                        <h1 class="text-center text-sm">English</h1>
+                        <h1 class="text-4xl font-bold">
+                            {{ $this->englishScore['percent'] }}%
+                        </h1>
+                        <h1 class="text-center text-sm"><span class="font-bold">{{ $this->englishScore['sum'] }}</span> out of {{ $this->englishScore['total'] }}</h1>
+                    </div>
+                    <div class="bg-gradient-to-br from-10% from-purple-500 to-violet-300 h-36 w-full text-center flex flex-col gap-2 text-white justify-center rounded-xl">
+                        <h1 class="text-center text-sm">Science</h1>
+                        <h1 class="text-4xl font-bold">
+                            {{ $this->scienceScore['percent'] }}%
+                        </h1>
+                        <h1 class="text-center text-sm"><span class="font-bold">{{ $this->scienceScore['sum'] }}</span> out of {{ $this->scienceScore['total'] }}</h1>
+                    </div>
+                    <div class="bg-gradient-to-br from-30% from-red-500 to-red-300 h-36 w-full text-center flex flex-col gap-2 text-white justify-center rounded-xl">
+                        <h1 class="text-center text-sm">Mathematics</h1>
+                        <h1 class="text-4xl font-bold">
+                            {{ $this->mathematicsScore['percent'] }}%
+                        </h1>
+                        <h1 class="text-center text-sm"><span class="font-bold">{{ $this->mathematicsScore['sum'] }}</span> out of {{ $this->mathematicsScore['total'] }}</h1>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    @if($examinee->grade_level === 11)
+        <div class="max-w-3xl mx-auto shadow bg-white px-10 py-6 mt-10 rounded-lg">
+            {{-- <div class="px-10 pt-2 text-gray-500 flex justify-between">
+                <span class="text-lg">Name: <span class="font-bold">{{ $examinee->name }}</span></span>
+                <span class="text-lg">Grade Level: <span class="font-bold">{{ $examinee->grade_level }}</span></span>
+            </div> --}}
+            <h1 class="text-xl font-bold">{{ __("All Recommended Strands") }} <span class="text-sm font-bold italic text-gray-500">{{ __("(Most to Least Recommended)") }}</span></h1>
+            
+            <div class=" flex justify-between gap-2 mt-4 font-bold">
+                <div class='bg-blue-600 h-52 w-full text-center flex flex-col gap-2 text-black justify-center rounded-xl'>
+                    <h1 class="text-xl text-white font-bold">
+                        {{ $examinee->strandRecommendations->where('ranking', 1)->first()->strand->description }}
+                    </h1>
+                </div>
+                <div class='bg-blue-500 h-52 w-full text-center flex flex-col gap-2 text-black justify-center rounded-xl'>
+                    <h1 class="text-xl text-white font-bold">
+                        {{ $examinee->strandRecommendations->where('ranking', 2)->first()->strand->description }}
+                    </h1>
+                </div>
+                <div class='bg-blue-400 h-52 w-full text-center flex flex-col gap-2 text-black justify-center rounded-xl'>
+                    <h1 class="text-xl text-white font-bold">
+                        {{ $examinee->strandRecommendations->where('ranking', 3)->first()->strand->description }}
+                    </h1>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
 
