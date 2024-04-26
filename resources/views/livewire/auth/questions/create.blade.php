@@ -11,10 +11,10 @@ rules([
 state([
     'correctAnswer' => 'A',
     'answerClasses' => [
-        'A' => 'bg-green-200',
-        'B' => 'bg-gray-100',
-        'C' => 'bg-gray-100',
-        'D' => 'bg-gray-100'
+        'A' => 'bg-green-400',
+        'B' => 'bg-gray-200',
+        'C' => 'bg-gray-200',
+        'D' => 'bg-gray-200'
     ],
     'categories' => App\Models\Category::all(),
     'categoryChoice' => 1,
@@ -32,7 +32,7 @@ $setCorrectAnswer = function ($choice) {
     $this->correctAnswer = $choice;
     $letters = ['A', 'B', 'C', 'D'];
     foreach ($letters as $letter) {
-        $this->answerClasses[$letter] = $this->correctAnswer === $letter ? 'bg-green-200' : 'bg-gray-100';
+        $this->answerClasses[$letter] = $this->correctAnswer === $letter ? 'bg-green-400' : 'bg-gray-200';
     }
 };
 
@@ -93,9 +93,9 @@ $submitForm = function () {
             <div class="mt-4">
                 <div class="flex">
                     <div class="flex flex-col">
-                        <h1 class="bg-blue-100 px-3 py-2 rounded-l-lg font-bold select-none" title="Question Field">Q</h1>
+                        <h1 class="bg-blue-300 px-3 py-2 rounded-l-lg font-bold select-none" title="Question Field">Q</h1>
                     </div>
-                    <div class="bg-blue-100 p-2 flex-1 rounded-b-lg rounded-tr-lg">
+                    <div class="bg-blue-300 p-2 flex-1 rounded-b-lg rounded-tr-lg">
                         {{-- <textarea
                                 class="resize-none p-0 w-full px-2 pt-2 text-base border-transparent h-full focus:border-transparent focus:ring-0 rounded overflow-hidden"
                                 x-data="{
