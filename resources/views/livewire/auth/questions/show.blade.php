@@ -37,10 +37,10 @@ $deleteQuestion = function() {
     <div class="mt-4 break-words text-lg">{{ $question->description }}</div>
     <div class="grid grid-cols-2 grid-rows-2 gap-3 mt-4">
         @foreach ($answers as $answer)
-            @php
-                $letterColor = $answer->is_correct ? 'bg-green-200' : 'bg-gray-100';
-            @endphp
-            <div class="flex">
+            <div class="flex" wire:key="showAnswer{{ $answer->id }}">
+                @php
+                    $letterColor = $answer->is_correct ? 'bg-green-200' : 'bg-gray-100';
+                @endphp
                 <div class="flex flex-col">
                     <div class="w-14 rounded-l text-center py-4 font-bold {{ $letterColor }}">{{ $answer->letter }}</div>
                 </div>

@@ -83,7 +83,7 @@ $submitForm = function () {
                     <span class="text-sm my-auto">Category:</span>
                     <select class="text-sm my-auto py-0 h-8 rounded-lg" wire:model="categoryChoice">
                         @foreach ($categories as $category)
-                            <option class="" value="{{ $category->id }}">{{ $category->title }}</option>
+                            <option wire:key='option{{ $category->id }}' class="" value="{{ $category->id }}">{{ $category->title }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -121,7 +121,7 @@ $submitForm = function () {
                 </h1>
                 <div class="grid grid-cols-2 grid-rows-2 gap-3 mt-2">
                     @foreach (['A', 'B', 'C', 'D'] as $letter)
-                        <div class="flex">
+                        <div class="flex" wire:key='inputanswer{{ $loop->index }}'>
                             <div class="flex flex-col">
                                 <h1 class="{{ $answerClasses[$letter] }} transition ease-in-out px-3 py-2 rounded-l-lg font-bold select-none" wire:click="setCorrectAnswer('{{ $letter }}')">{{ $letter }}</h1>
                             </div>

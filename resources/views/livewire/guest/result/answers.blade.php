@@ -8,14 +8,15 @@ use App\Models\Question;
 
 state([
     'examinee',
-    'questions'
+    'questions',
+    'heading'
 ]);
 
 ?>
 
 <div class="mx-auto w-2/4 my-10">
     <h1 class="text-center font-bold text-2xl">
-        Your Answers
+        {{ $this->heading }}
     </h1>
 
     @foreach ($questions as $question)

@@ -11,10 +11,10 @@ state([
             case 1:
                 return 'bg-red-200';
                 break;
-            case 2:
+            case 3:
                 return 'bg-yellow-100';
                 break;
-            case 3:
+            case 2:
                 return 'bg-purple-100';
                 break;
             default:
@@ -34,11 +34,13 @@ on([
 
 ?>
 
-<div class="bg-white shadow-sm sm:rounded-lg mt-4 p-4 rounded-xl transition ease-linear">
-    @if($viewState === 'show')
-        <livewire:auth.questions.show :$question :$answers :$gradeColor :$categoryColor />
-    @elseif ($viewState === 'edit')
-        <livewire:auth.questions.edit :$question :$answers :$gradeColor :$categoryColor />
-    @endif
+<div>
+    <div class="bg-white shadow-sm sm:rounded-lg mt-4 p-4 rounded-xl transition ease-linear">
+        @if($viewState === 'show')
+            <livewire:auth.questions.show :$question :$answers :$gradeColor :$categoryColor />
+        @elseif ($viewState === 'edit')
+            <livewire:auth.questions.edit :$question :$answers :$gradeColor :$categoryColor />
+        @endif
+    </div>
 </div>
 

@@ -13,7 +13,8 @@ layout('layouts.examinee');
 
 state([
     'examinee',
-    'answer'
+    'answer',
+    'questions'
 ]);
 
 mount(function () {

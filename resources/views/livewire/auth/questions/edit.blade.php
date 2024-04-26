@@ -94,7 +94,7 @@ $updateQuestion = function() {
     </div>
     <div class="grid grid-cols-2 grid-rows-2 gap-3 mt-4">
         @foreach ($this->answers as $answer)
-            <div class="flex">
+            <div class="flex" wire:key="editanswers{{ $answer->id }}">
                 <div class="flex flex-col"  x-on:click="$wire.setCorrectAnswer('{{ $answer->letter }}')">
                     <div class="w-14 rounded-l text-center py-4 px-0 font-bold {{ $answerClasses[$answer->letter] }}">{{ $answer->letter }}</div>
                 </div>
