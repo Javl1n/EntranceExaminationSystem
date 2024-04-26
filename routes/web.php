@@ -28,8 +28,14 @@ Route::view('profile', 'profile')
     ->name('profile');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
     Volt::route('/exams', 'pages.exam.index')->name('exams.index');
-    Volt::route('/examinees', 'pages.examinees.index')->name('examinees.index');
+    
+    Volt::route('/sections', 'pages.examinees.sections.index')->name('sections.index');
+    Volt::route('/sections/{examinee:id}', 'pages.examinees.show')->name('sections.show');
+
+    Volt::route('/strands', 'pages.examinees.strands.index')->name('strands.index');
+    Volt::route('/strands/{examinee:id}', 'pages.examinees.show')->name('strands.show');
 });
 
 Route::middleware(['guest'])->group(function () {

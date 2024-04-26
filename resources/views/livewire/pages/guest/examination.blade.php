@@ -128,12 +128,12 @@ $submit = function ()  {
             <div>
             {{-- <div x-data="" x-init="init();"> --}}
                 Time Left: 
-                    <span x-show="hours().value > 0 || minutes().value > 0 || seconds().value > 0">
+                    <span class="font-bold" x-show="hours().value >= 0 || minutes().value >= 0 || seconds().value >= 0">
                         <span x-text="time().hours"></span> : 
                         <span x-text="time().minutes"></span> : 
                         <span x-text="time().seconds"></span>
                     </span>
-                    <span x-show="hours().value <= 0 || minutes().value <= 0 || seconds().value <= 0">
+                    <span class="font-bold" x-show="hours().value < 0 || minutes().value < 0 || seconds().value < 0">
                         00 : 00 : 00
                     </span>
             </div>
@@ -191,7 +191,7 @@ $submit = function ()  {
                 }
             </script>
         </div>        
-            <div x-show="hours().value > 0 || minutes().value > 0 || seconds().value > 0">
+            <div x-show="hours().value >= 0 || minutes().value >= 0 || seconds().value >= 0">
                 @foreach ($questions as $question)
                     <div x-show="{{ $question->id }} === order[n]"
                         x-transition:enter="transition ease-in-out duration-400"
@@ -256,14 +256,14 @@ $submit = function ()  {
                 @endforeach
             </div>
             <div 
-            x-show="hours().value <= 0 || minutes().value <= 0 || seconds().value <= 0" 
+            x-show="hours().value < 0 || minutes().value < 0 || seconds().value < 0" 
             class="w-full bg-white rounded-lg h-80 shadow-md mt-4 flex flex-col justify-center">
                 <h1 class="text-center text-4xl font-bold">
                     Time's Up!
                 </h1>
             </div>
             <div class="mt-12 flex justify-center">
-                <div x-show = "n >= {{ $questions->count() }} -1 || hours().value <= 0 || minutes().value <= 0 || seconds().value <= 0">
+                <div x-show = "n >= {{ $questions->count() }} -1 || hours().value < 0 || minutes().value < 0 || seconds().value < 0">
                     <button
                         x-data = "{
                             submit () {

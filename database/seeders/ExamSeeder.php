@@ -254,16 +254,95 @@ class ExamSeeder extends Seeder
 
         // Math Questions
 
+        \App\Models\Question::factory([
+            'grade_level' => 7,
+            'category_id' => $mathematics->id,
+            'description' => '1 + 1 = ?'
+            ])->has(
+                \App\Models\Answer::factory()->count(4)
+                    ->sequence(
+                        [
+                            'letter' => 'A',
+                            'is_correct' => false,
+                            'description' => '1'
+                        ],
+                        [
+                            'letter' => 'B',
+                            'is_correct' => false,
+                            'description' => '11'
+                        ],
+                        [
+                            'letter' => 'C', 
+                            'is_correct' => true,
+                            'description' => '2'
+                        ],
+                        [
+                            'letter' => 'D',
+                            'is_correct' => false,
+                            'description' => '4'
+                        ],
+                    )
+        )->create();
+
         // English Questions
-        
-        
-        
-        
-        
-        
 
-
-
+        \App\Models\Question::factory([
+            'grade_level' => 7,
+            'category_id' => $english->id,
+            'description' => '"I am singing", what is the subject?'
+            ])->has(
+                \App\Models\Answer::factory()->count(4)
+                    ->sequence(
+                        [
+                            'letter' => 'A',
+                            'is_correct' => false,
+                            'description' => 'am'
+                        ],
+                        [
+                            'letter' => 'B',
+                            'is_correct' => true,
+                            'description' => 'I'
+                        ],
+                        [
+                            'letter' => 'C', 
+                            'is_correct' => false,
+                            'description' => 'singing'
+                        ],
+                        [
+                            'letter' => 'D',
+                            'is_correct' => false,
+                            'description' => 'none of these'
+                        ],
+                    )
+        )->create();
+        
+        // Grade 11 Seeder
+        // foreach ([$mathematics, $science, $english] as $subject) {
+        //     \App\Models\Question::factory(20)->has(
+        //             \App\Models\Answer::factory()->count(4)
+        //                 ->sequence(
+        //                     [
+        //                         'letter' => 'A',
+        //                         'is_correct' => true,
+        //                     ],
+        //                     [
+        //                         'letter' => 'B',
+        //                         'is_correct' => false,
+        //                     ],
+        //                     [
+        //                         'letter' => 'C', 
+        //                         'is_correct' => false,
+        //                     ],
+        //                     [
+        //                         'letter' => 'D',
+        //                         'is_correct' => false,
+        //                     ],
+        //                 )
+        //     )->create([
+        //         'grade_level' => 11,
+        //         'category_id' => $subject->id,
+        //     ]);
+        // }
 
 
         
@@ -279,25 +358,25 @@ class ExamSeeder extends Seeder
 
         // foreach($subjects as $subject) {
         //     $category = \App\Models\Category::factory()
+        //     // ->has(
+        //     //     \App\Models\Question::factory(['grade_level' => 7])->count(5)
+        //     //     ->has(
+        //     //         \App\Models\Answer::factory()->count(4)
+        //     //         ->sequence(
+        //     //             ['letter' => 'A', 'is_correct' => true],
+        //     //             ['letter' => 'B', 'is_correct' => false],
+        //     //             ['letter' => 'C', 'is_correct' => false],
+        //     //             ['letter' => 'D', 'is_correct' => false],
+        //     //         )
+        //     //     )
+        //     //     // ->sequence(
+        //     //     //     ['description' =>  "$subject question 1"],
+        //     //     //     ['description' => "$subject question 2"],
+        //     //     //     ['description' => "$subject question 3"],
+        //     //     // )
+        //     // )
         //     ->has(
-        //         \App\Models\Question::factory(['grade_level' => 7])->count(5)
-        //         ->has(
-        //             \App\Models\Answer::factory()->count(4)
-        //             ->sequence(
-        //                 ['letter' => 'A', 'is_correct' => true],
-        //                 ['letter' => 'B', 'is_correct' => false],
-        //                 ['letter' => 'C', 'is_correct' => false],
-        //                 ['letter' => 'D', 'is_correct' => false],
-        //             )
-        //         )
-        //         // ->sequence(
-        //         //     ['description' =>  "$subject question 1"],
-        //         //     ['description' => "$subject question 2"],
-        //         //     ['description' => "$subject question 3"],
-        //         // )
-        //     )
-        //     ->has(
-        //         \App\Models\Question::factory(['grade_level' => 11])->count(5)
+        //         \App\Models\Question::factory(['grade_level' => 11])->count(20)
         //         ->has(
         //             \App\Models\Answer::factory()->count(4)
         //             ->sequence(

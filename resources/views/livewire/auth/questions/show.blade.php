@@ -14,7 +14,7 @@ $editMode = fn () => $this->dispatch("editMode-" . $this->question->id);
 $deleteQuestion = function() {
     $this->question->delete();
     session()->flash('deleted', 'Question Deleted Successfully');
-    return $this->redirectRoute('exams', navigate: true);
+    return $this->redirectRoute('exams.index', navigate: true);
 }
 
 ?>

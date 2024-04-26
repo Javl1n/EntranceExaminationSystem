@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->integer('grade_level');
             $table->boolean('answered')->nullable()->default(false);
-            $table->string('contact');
-            // $table->string('email')->unique();
+            // $table->string('contact');
+            $table->string('email')->unique();
             $table->timestamps();
         });
     }

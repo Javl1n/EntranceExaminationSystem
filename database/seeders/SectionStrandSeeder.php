@@ -33,6 +33,11 @@ class SectionStrandSeeder extends Seeder
             'description' => 'Deutoronomy'
         ]);
 
+        \App\Models\Section::create([
+            'letter' => 'F',
+            'description' => 'Remedial'
+        ]);
+
         // Strands
         \App\Models\Strand::create([
             'title' => 'STEM',
@@ -47,6 +52,11 @@ class SectionStrandSeeder extends Seeder
         \App\Models\Strand::create([
             'title' => 'HUMSS',
             'description' => 'Humanities and Social Sciences'
+        ]);
+
+        \App\Models\Strand::create([
+            'title' => 'Remedial',
+            'description' => 'Failed'
         ]);
     }
 }

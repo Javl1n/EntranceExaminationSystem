@@ -10,7 +10,7 @@ class Strand extends Model
 {
     use HasFactory;
 
-    protected $with = ['list'];
+    // protected $with = ['list'];
 
     /**
      * Get all of the list for the Strand

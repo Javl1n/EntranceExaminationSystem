@@ -8,15 +8,15 @@ layout('layouts.examinee');
 
 state([
     'name',
-    // 'email',
-    'contact',
+    'email',
+    // 'contact',
     'grade' => 7,
 ]);
 
 rules([
     'name' => ['required', 'string', 'max:255'],
-    // 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-    'contact' => ['required', 'numeric', 'starts_with:09', 'max_digits:11', 'min_digits:11']
+    'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . Examinee::class],
+    // 'contact' => ['required', 'numeric', 'starts_with:09', 'max_digits:11', 'min_digits:11']
 ]);
 
 $grade7 = fn () => $this->grade = 7;
@@ -27,7 +27,8 @@ $register = function () {
     $this->validate();
     $examinee = Examinee::firstOrCreate([
         'name' => $this->name,
-        'contact' => $this->contact,
+        // 'contact' => $this->contact,
+        'email' => $this->email,
         'grade_level' => $this->grade, 
     ]);
 
@@ -41,12 +42,12 @@ $register = function () {
         <div class="grid grid-cols-2 p-4">
             <div class="col-span-1 px-6 py-4 text-white">
                 <h1 class="font-bold text-lg">EXAM GUIDLINES</h1>
-                <ol class="list-decimal">
-                    <li>lorem</li>
-                    <li>lorem</li>
-                    <li>lorem</li>
-                    <li>lorem</li>
-                    <li>lorem</li>
+                <ol class="list-decimal w-80">
+                    <li>Avoid Changing tab during examination period; it will reset your progress.</li>
+                    <li class="mt-2">Be mindful of the time limit. Scores will be calculated automatically if you run out of time.</li>
+                    <li class="mt-2">Average must be 75% and above.</li>
+                    <li class="mt-2">Examination result will determine your section/strand.</li>
+                    <li class="mt-2">Do not cheat.</li>
                 </ol>
     
             </div>
@@ -60,14 +61,14 @@ $register = function () {
                         <x-input-error :messages="$errors->get('name')" class="mt-2" />
                     </div>
             
-                    {{-- <!-- Email Address -->
+                    <!-- Email Address -->
                     <div class="mt-4">
                         <x-input-label for="email" :value="__('Email')" />
                         <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="username" />
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
-                    </div> --}}
+                    </div>
             
-                    <!-- Contact Number -->
+                    {{-- <!-- Contact Number -->
                     <div class="mt-4">
                         <x-input-label for="contact" :value="__('Contact Number')" />
             
@@ -77,7 +78,7 @@ $register = function () {
                                          />
             
                         <x-input-error :messages="$errors->get('contact')" class="mt-2" />
-                    </div>
+                    </div> --}}
     
                     <!-- Grade Level -->
                     <div class="mt-4">
