@@ -138,6 +138,16 @@ $submit = function ()  {
                     </span>
             </div>
             <script>
+                history.pushState(null, document.title, location.href);
+                window.addEventListener('popstate', function (event)
+                {
+                    const leavePage = confirm("Leaving page will reset your exam");
+                    if (leavePage) {
+                        history.back();
+                    } else {
+                        history.pushState(null, document.title, location.href);
+                    }
+                });
                 function timer(expiry) {
                     return {
                         expiry: expiry,

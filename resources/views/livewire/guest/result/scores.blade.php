@@ -175,7 +175,7 @@ $assignment = computed(function () {
                         'science' => 3,
                     },
             },
-        ])->strand;
+        ])?->strand;
 
         $this->examinee->strandRecommendations()->firstOrCreate([
             'ranking' => 2,
@@ -251,17 +251,6 @@ $retake = function () {
 
 <div>
     <div class="max-w-3xl mx-auto shadow bg-white  rounded-lg">
-        {{-- <div class="px-10 pt-2 text-gray-500 flex justify-between">
-            <span class="text-lg">Name: <span class="font-bold">{{ $examinee->name }}</span></span>
-            <span class="text-lg">Grade Level: <span class="font-bold">{{ $examinee->grade_level }}</span></span>
-        </div> --}}
-        {{-- @if ($this->average['percent'] < 75)
-            <div class="absolute max-w-3xl w-screen px-5 py-5">
-                <div class="flex justify-end">
-                    <h1 wire:click='$dispatch("open-modal", "confirm-examinee-retake")' class="text-xl font-extrabold text-red-600 cursor-pointer w-8 h-8 text-center hover:bg-gray-50 rounded-full"> ! </h1>
-                </div>
-            </div>
-        @endif --}}
         <div class="flex gap-10 py-8 px-10 justify-center">
             <div class="bg-gradient-to-bl from-30% from-blue-500 to-indigo-200 h-52 w-52 aspect-square rounded-full text-center flex flex-col gap-2 justify-center my-auto">
                 <div class="text-white font-bold">Average</div>
@@ -307,7 +296,7 @@ $retake = function () {
             </div>
         </div>
     </div>
-    @if($examinee->grade_level === 11)
+    @if($examinee->grade_level === 11 && $this->average['percent'] >= 75)
         <div class="max-w-3xl mx-auto shadow bg-white px-10 py-6 mt-10 rounded-lg">
             {{-- <div class="px-10 pt-2 text-gray-500 flex justify-between">
                 <span class="text-lg">Name: <span class="font-bold">{{ $examinee->name }}</span></span>

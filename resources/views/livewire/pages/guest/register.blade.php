@@ -15,7 +15,7 @@ state([
 
 rules([
     'name' => ['required', 'string', 'max:255'],
-    'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . Examinee::class],
+    'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
     // 'contact' => ['required', 'numeric', 'starts_with:09', 'max_digits:11', 'min_digits:11']
 ]);
 
