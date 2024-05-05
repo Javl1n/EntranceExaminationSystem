@@ -323,7 +323,7 @@ $retake = function () {
             </div>
         </div>
     @endif
-    <x-modal name="confirm-examinee-retake" :show="$errors->isNotEmpty()" maxWidth='md' focusable>
+    {{-- <x-modal name="confirm-examinee-retake" :show="$errors->isNotEmpty()" maxWidth='md' focusable>
         <form wire:submit="retake" class="p-6">
             <h2 class="text-lg font-medium text-gray-900 text-center">
                 {{ __('Are you sure you want to retake the exam?') }}
@@ -352,6 +352,6 @@ $retake = function () {
                 </x-danger-button>
             </div>
         </form>
-    </x-modal>
+    </x-modal> --}}
 </div>
 

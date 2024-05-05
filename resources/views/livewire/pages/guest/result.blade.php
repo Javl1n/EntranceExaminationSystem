@@ -33,6 +33,9 @@ mount(function () {
         'strandRecommendations',
         'sectionPivot'
     ])->findOrFail($this->examinee);
+    if(!$this->examinee->answered){
+        return $this->redirectRoute('examinees.startExam', ['examinee' => $this->examinee->id], navigate: true);
+    }
     $this->questions = Question::
     with([
         'category', 
@@ -71,15 +74,15 @@ $percent = computed(function () {
         </div>
     </div>
     <div class="mt-10">@livewire('guest.result.scores', ['examinee' => $this->examinee, 'questions' => $this->questions])</div>
-    @if ($this->percent < 75)
-            <div class="flex justify-center mt-10">
-                <x-danger-button 
-                x-data=""
-                x-on:click.prevent="$dispatch('open-modal', 'confirm-examinee-retake')"> 
-                    Retake Exam
-                </x-danger-button>
-            </div>
-        @endif
+    {{-- @if ($this->percent < 75)
+        <div class="flex justify-center mt-10">
+            <x-danger-button 
+            x-data=""
+            x-on:click.prevent="$dispatch('open-modal', 'confirm-examinee-retake')"> 
+                Retake Exam
+            </x-danger-button>
+        </div>
+    @endif --}}
     @if($this->percent >= 75)
         <div class="flex justify-center mt-10">
             <x-primary-button class="mx-auto">
