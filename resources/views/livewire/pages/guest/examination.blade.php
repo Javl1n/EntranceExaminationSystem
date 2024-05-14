@@ -15,7 +15,8 @@ state([
     'examinee',
     'questions',
     'timer',
-    'selectedAnswers'
+    'selectedAnswers',
+    'devMode' => false
 ]);
 
 mount(function () {
@@ -61,19 +62,187 @@ $selectAnswers = function ($question, $letter) {
 
 
 $submit = function ()  {
-    foreach ($this->selectedAnswers as $key => $value) {
-        if($value === ''){
-            continue;
-        }
-        $this->examinee->answers()->create([
+    $this->answers = collect($this->selectedAnswers);
+
+    $answers = $this->answers->filter(function ($value, $key) {
+        return $value !== '';
+    })->map(function ($value, $key) {
+        return $this->examinee->answers()->firstOrCreate([
             'question_id' => $key,
             'answer_id' => $value
         ]);
+    });
+
+    $scores = $this->examinee->scores()->createMany([
+        [
+            'score' => $answers->where('question.category_id', 1)->where('answer.is_correct')->count(),
+            'total' => $this->questions->where('category_id', 1)->count(),
+            'category_id' => 1
+        ],
+        [
+            'score' => $answers->where('question.category_id', 2)->where('answer.is_correct')->count(),
+            'total' => $this->questions->where('category_id', 2)->count(),
+            'category_id' => 2
+        ],
+        [
+            'score' => $answers->where('question.category_id', 3)->where('answer.is_correct')->count(),
+            'total' => $this->questions->where('category_id', 3)->count(),
+            'category_id' => 3
+        ],
+    ])->sortByDesc('score');
+    
+    $scorePercent = round($scores->pluck('score')->sum() / $this->questions->count() * 100, 2);
+
+    if($this->examinee->grade_level === 7) {
+        $this->examinee->sectionPivot()->firstOrCreate([
+            'section_id' => match(true) {
+                $average < 75 => 5,
+                $average < 80 => 4,
+                $average < 85 => 3,
+                $average < 90 => 2,
+                $average <=100 => 1,
+            }
+        ]);
+    } else if ($this->examinee->grade_level === 11) {
+        // ddd($scores[2]->category->title);
+        if($scorePercent < 75) {
+            $this->examinee->strandRecommendations()->firstOrCreate([
+                'ranking' => 1,
+                'strand_id' => 4,
+            ]);
+        
+            $this->examinee->strandRecommendations()->firstOrCreate([
+                'ranking' => 2,
+                'strand_id' => match ($scores[0]->category->title) {
+                    'Mathematics' => 
+                        match ($scores[1]->category->title) {
+                            'Science' => 1,
+                            'English' => 2
+                        },
+                    'Science' => 
+                        match ($scores[1]->category->title) {
+                            'Mathematics' => 1,
+                            'English' => 3,
+                        },
+                    'English' => 
+                        match ($scores[1]->category->title) {
+                            'Mathematics' => 2,
+                            'Science' => 3,
+                        },
+                },
+            ]);
+
+            $this->examinee->strandRecommendations()->firstOrCreate([
+                'ranking' => 3,
+                'strand_id' => match ($scores[0]->category->title) {
+                    'Mathematics' => 
+                        match ($scores[2]->category->title) {
+                            'Science' => 1,
+                            'English' => 2
+                        },
+                    'Science' => 
+                        match ($scores[2]->category->title) {
+                            'Mathematics' => 1,
+                            'English' => 3,
+                        },
+                    'English' => 
+                        match ($scores[2]->category->title) {
+                            'Mathematics' => 2,
+                            'Science' => 3,
+                        },
+                },
+            ]);
+
+            $this->examinee->strandRecommendations()->firstOrCreate([
+                'ranking' => 4,
+                'strand_id' => match ($scores[1]->category->title) {
+                    'Mathematics' => 
+                        match ($scores[2]->category->title) {
+                            'Science' => 1,
+                            'English' => 2
+                        },
+                    'Science' => 
+                        match ($scores[2]->category->title) {
+                                'Mathematics' => 1,
+                                'English' => 3,
+                        },
+                    'English' => 
+                        match ($scores[2]->category->title) {
+                            'Mathematics' => 2,
+                            'Science' => 3,
+                        },
+                },
+            ]);
+        } else {
+            $this->examinee->strandRecommendations()->firstOrCreate([
+                'ranking' => 1,
+                'strand_id' => match ($scores[0]->category->title) {
+                    'Mathematics' => 
+                        match ($scores[1]->category->title) {
+                            'Science' => 1,
+                            'English' => 2
+                        },
+                    'Science' => 
+                        match ($scores[1]->category->title) {
+                            'Mathematics' => 1,
+                            'English' => 3,
+                        },
+                    'English' => 
+                        match ($scores[1]->category->title) {
+                            'Mathematics' => 2,
+                            'Science' => 3,
+                        },
+                },
+            ]);
+
+            $this->examinee->strandRecommendations()->firstOrCreate([
+                'ranking' => 2,
+                'strand_id' => match ($scores[0]->category->title) {
+                    'Mathematics' => 
+                        match ($scores[2]->category->title) {
+                            'Science' => 1,
+                            'English' => 2
+                        },
+                    'Science' => 
+                        match ($scores[2]->category->title) {
+                            'Mathematics' => 1,
+                            'English' => 3,
+                        },
+                    'English' => 
+                        match ($scores[2]->category->title) {
+                            'Mathematics' => 2,
+                            'Science' => 3,
+                        },
+                },
+            ]);
+
+            $this->examinee->strandRecommendations()->firstOrCreate([
+                'ranking' => 3,
+                'strand_id' => match ($scores[1]->category->title) {
+                    'mathematics' => 
+                        match ($scores[2]->category->title) {
+                            'science' => 1,
+                            'english' => 2
+                        },
+                    'science' => 
+                        match ($scores[2]->category->title) {
+                                'mathematics' => 1,
+                                'english' => 3,
+                        },
+                    'english' => 
+                        match ($scores[2]->category->title) {
+                            'mathematics' => 2,
+                            'science' => 3,
+                        },
+                },
+            ]);
+        }
     }
+
     $this->examinee->update([
         'answered' => 1
     ]);
-    
+
     return $this->redirectRoute('examinees.result', ['examinee' => $this->examinee->id], navigate: true);
 };
 
@@ -273,7 +442,7 @@ $submit = function ()  {
                 </h1>
             </div>
             <div class="mt-12 flex justify-center">
-                <div x-show = "n >= {{ $questions->count() }} -1 || hours().value < 0 || minutes().value < 0 || seconds().value < 0">
+                <div x-show = "$wire.devMode || n >= {{ $questions->count() }} -1 || hours().value < 0 || minutes().value < 0 || seconds().value < 0">
                     <button
                         x-data = "{
                             submit () {
@@ -289,7 +458,7 @@ $submit = function ()  {
                     </button>
                 </div>
                 <div x-show="hours().value > 0 || minutes().value > 0 || seconds().value > 0" >
-                    <div x-show = "n < {{ $questions->count() }} -1">
+                    <div x-show = "n < {{ $questions->count() }} -1 && eval('selectedAnswers.question' + order[n]) !== ''" class="transition delay-200">
                         <a
                             x-on:click="n++; tabReset=''"
                             class="bg-blue-500 text-white text-xl font-bold uppercase px-12 py-2 rounded-lg cursor-pointer select-none">

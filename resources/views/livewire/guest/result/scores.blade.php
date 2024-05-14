@@ -8,58 +8,26 @@ use App\Models\User;
 state([
     'examinee',
     'questions',
-    'password'
+    'password',
 ]);
 
 
 // question counts
 $englishQuestionCount = computed(function () {
-    $count = 0;
-    foreach($this->questions as $question) {
-        if ($question->category->id === 2) {
-            $count++;
-        }
-    }
-
-    return $count;
+    return $this->examinee->scores()->where('category_id', 2)->first()->total;
 });
 
 $mathematicsQuestionCount = computed(function () {
-    $count = 0;
-    foreach($this->questions as $question) {
-        if ($question->category->id === 1) {
-            $count++;
-        }
-    }
-    return $count;
+    return $this->examinee->scores()->where('category_id', 1)->first()->total;
 });
 
 $scienceQuestionCount = computed(function () {
-    $count = 0;
-    foreach($this->questions as $question) {
-        if ($question->category->id === 3) {
-            $count++;
-        }
-    }
-    return $count;
+    return $this->examinee->scores()->where('category_id', 3)->first()->total;
 });
 
 // scores
 $englishScore = computed(function () {
-    $count = 0;
-    foreach($this->examinee->answers as $input) {
-        if ($input->question->category->id === 2){
-            if($input->answer->is_correct) {
-                $count++;
-            }
-        }
-    }
-    $this->examinee->scores()->firstOrCreate([
-        'score' => $count,
-        'total' => $this->englishQuestionCount,
-        'category_id' => 2
-    ]);
-
+    $count = $this->examinee->scores()->where('category_id', 2)->first()->score;
     $percent = 0;
     if ($this->englishQuestionCount > 0) {
         $percent = round(($count / $this->englishQuestionCount) * 100, 1);
@@ -68,19 +36,7 @@ $englishScore = computed(function () {
 });
 
 $scienceScore = computed(function () {
-    $count = 0;
-    foreach($this->examinee->answers as $input) {
-        if ($input->question->category->id === 3){
-            if($input->answer->is_correct) {
-                $count++;
-            }
-        }
-    }
-    $this->examinee->scores()->firstOrCreate([
-        'score' => $count,
-        'total' => $this->scienceQuestionCount,
-        'category_id' => 3
-    ]);
+    $count = $this->examinee->scores()->where('category_id', 3)->first()->score;
     $percent = 0;
     if ($this->scienceQuestionCount > 0) {
         $percent = round(($count / $this->scienceQuestionCount) * 100, 1);
@@ -89,19 +45,7 @@ $scienceScore = computed(function () {
 });
 
 $mathematicsScore = computed(function () {
-    $count = 0;
-    foreach($this->examinee->answers as $input) {
-        if ($input->question->category->id === 1){
-            if($input->answer->is_correct) {
-                $count++;
-            }
-        }
-    }
-    $this->examinee->scores()->firstOrCreate([
-        'score' => $count,
-        'total' => $this->mathematicsQuestionCount,
-        'category_id' => 1
-    ]);
+    $count = $this->examinee->scores()->where('category_id', 1)->first()->score;
     $percent = 0;
     if ($this->mathematicsQuestionCount > 0) {
         $percent = round(($count / $this->mathematicsQuestionCount) * 100, 1);
@@ -111,115 +55,16 @@ $mathematicsScore = computed(function () {
 
 // average score
 $average = computed(function () {
-    $sumAverage = $this->mathematicsScore['percent'] 
-            + $this->scienceScore['percent'] 
-            + $this->englishScore['percent'];
-    $sum = $this->mathematicsScore['sum'] 
-            + $this->scienceScore['sum'] 
-            + $this->englishScore['sum'];
-    $percent = round($sum / $this->questions->count() * 100, 1);
+    $percent = round($this->examinee->scores->pluck('score')->sum() / $this->examinee->scores->pluck('total')->sum() * 100, 2);
 
-    return ['total' => $this->questions->count(), 'percent' => $percent, 'sum' => $sum];
+    return ['total' => $this->questions->count(), 'percent' => $percent, 'sum' => $this->examinee->scores->pluck('score')->sum()];
 });
 
 $assignment = computed(function () {
     if($this->examinee->grade_level === 7) {
-        $average = $this->average['percent'];
-
-        $section = $this->examinee->sectionPivot()->firstOrCreate([
-            'section_id' => match(true) {
-                $average < 75 => 5,
-                $average < 80 => 4,
-                $average < 85 => 3,
-                $average < 90 => 2,
-                $average <=100 => 1,
-            }
-        ])->section;
-        return ['grade' => "Section", 'place' => $section->letter . ' - ' . $section->description];
+        return ['grade' => "Section", 'place' => $this->examineeSectionPivot->letter . ' - ' . $this->examineeSectionPivot->description];
     } else if ($this->examinee->grade_level === 11) {
-        if ($this->average['percent'] < 75) {
-            $strand = $this->examinee->strandRecommendations()->firstOrCreate([
-                'ranking' => 1,
-                'strand_id' => 4,
-            ])->strand;
-            return ['grade' => 'Strand', 'place' => $strand->title];
-        }
-        $score['science'] = $this->scienceScore['percent'];
-        $score['english'] = $this->englishScore['percent'];
-        $score['mathematics'] = $this->mathematicsScore['percent'];
-
-        // $score['science'] = 14;
-        // $score['english'] = 3;
-        // $score['mathematics'] = 20;
-
-        arsort($score);
-
-        $subjects = array_keys($score);
-        
-        $strand = $this->examinee->strandRecommendations()->firstOrCreate([
-            'ranking' => 1,
-            'strand_id' => match ($subjects[0]) {
-                'mathematics' => 
-                    match ($subjects[1]) {
-                        'science' => 1,
-                        'english' => 2
-                    },
-                'science' => 
-                    match ($subjects[1]) {
-                            'mathematics' => 1,
-                            'english' => 3,
-                    },
-                'english' => 
-                    match ($subjects[1]) {
-                        'mathematics' => 2,
-                        'science' => 3,
-                    },
-            },
-        ])?->strand;
-
-        $this->examinee->strandRecommendations()->firstOrCreate([
-            'ranking' => 2,
-            'strand_id' => match ($subjects[0]) {
-                'mathematics' => 
-                    match ($subjects[2]) {
-                        'science' => 1,
-                        'english' => 2
-                    },
-                'science' => 
-                    match ($subjects[2]) {
-                            'mathematics' => 1,
-                            'english' => 3,
-                    },
-                'english' => 
-                    match ($subjects[2]) {
-                        'mathematics' => 2,
-                        'science' => 3,
-                    },
-            },
-        ]);
-
-        $this->examinee->strandRecommendations()->firstOrCreate([
-            'ranking' => 3,
-            'strand_id' => match ($subjects[1]) {
-                'mathematics' => 
-                    match ($subjects[2]) {
-                        'science' => 1,
-                        'english' => 2
-                    },
-                'science' => 
-                    match ($subjects[2]) {
-                            'mathematics' => 1,
-                            'english' => 3,
-                    },
-                'english' => 
-                    match ($subjects[2]) {
-                        'mathematics' => 2,
-                        'science' => 3,
-                    },
-            },
-        ]);
-        
-        return ['grade' => "Strand", "place" => $strand->title];
+        return ['grade' => "Strand", "place" => $this->examinee->strandRecommendations->where('ranking', 1)->first()->strand->title];
     }
 });
 
@@ -250,7 +95,7 @@ $retake = function () {
 ?>
 
 <div>
-    <div class="max-w-3xl mx-auto shadow bg-white  rounded-lg">
+    <div class="max-w-3xl mx-auto shadow bg-white rounded-lg" >
         <div class="flex gap-10 py-8 px-10 justify-center">
             <div class="bg-gradient-to-bl from-30% from-blue-500 to-indigo-200 h-52 w-52 aspect-square rounded-full text-center flex flex-col gap-2 justify-center my-auto">
                 <div class="text-white font-bold">Average</div>
@@ -323,6 +168,11 @@ $retake = function () {
             </div>
         </div>
     @endif
+    <div class="flex justify-center mt-10">
+        <x-primary-button x-on:click="dlImage" class="mx-auto">
+            Send to Email
+        </x-primary-button>
+    </div>
     {{-- <x-modal name="confirm-examinee-retake" :show="$errors->isNotEmpty()" maxWidth='md' focusable>
         <form wire:submit="retake" class="p-6">
             <h2 class="text-lg font-medium text-gray-900 text-center">

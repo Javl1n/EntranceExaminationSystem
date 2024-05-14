@@ -5,11 +5,6 @@
  */
 
 import axios from 'axios';
-import collapse from '@alpinejs/collapse';
-import intersect from '@alpinejs/intersect';
-
-Alpine.plugin(collapse);
-Alpine.plugin(intersect);
 
 window.axios = axios;
 

@@ -73,7 +73,9 @@ $percent = computed(function () {
             </div>
         </div>
     </div>
-    <div class="mt-10">@livewire('guest.result.scores', ['examinee' => $this->examinee, 'questions' => $this->questions])</div>
+    <div class="mt-10">
+        @livewire('guest.result.scores', ['examinee' => $this->examinee, 'questions' => $this->questions])
+    </div>
     {{-- @if ($this->percent < 75)
         <div class="flex justify-center mt-10">
             <x-danger-button 
@@ -83,14 +85,10 @@ $percent = computed(function () {
             </x-danger-button>
         </div>
     @endif --}}
-    @if($this->percent >= 75)
-        <div class="flex justify-center mt-10">
-            <x-primary-button class="mx-auto">
-                Send to Email
-            </x-primary-button>
-        </div>
+    {{-- @if($this->percent >= 75) --}}
+        
         @livewire('guest.result.answers', ['examinee' => $this->examinee, 'questions' => $this->questions])
-    @endif
+    {{-- @endif --}}
     <div class="sticky bottom-10" x-show="scrolled"  x-transition.duration.500ms >
         <div class="flex justify-center">
             <a href="#top" class="bg-blue-500 px-5 py-2 rounded-full shadow">
