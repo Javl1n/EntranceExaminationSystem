@@ -13,6 +13,7 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.0",
+        "mailersend/laravel-driver": "^2.5",
         "resend/resend-php": "^0.12.0"
     },
     "require-dev": {

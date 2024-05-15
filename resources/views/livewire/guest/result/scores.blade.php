@@ -62,7 +62,7 @@ $average = computed(function () {
 
 $assignment = computed(function () {
     if($this->examinee->grade_level === 7) {
-        return ['grade' => "Section", 'place' => $this->examineeSectionPivot->letter . ' - ' . $this->examineeSectionPivot->description];
+        return ['grade' => "Section", 'place' => $this->examinee->sectionPivot->section->letter . ' - ' . $this->examinee->sectionPivot->section->description];
     } else if ($this->examinee->grade_level === 11) {
         return ['grade' => "Strand", "place" => $this->examinee->strandRecommendations->where('ranking', 1)->first()->strand->title];
     }
@@ -168,11 +168,13 @@ $retake = function () {
             </div>
         </div>
     @endif
-    <div class="flex justify-center mt-10">
-        <x-primary-button x-on:click="dlImage" class="mx-auto">
-            Send to Email
-        </x-primary-button>
-    </div>
+    @if (request()->routeIs('examiness.startExam'))
+        <div class="flex justify-center mt-10">
+            <x-primary-button x-on:click="dlImage" class="mx-auto">
+                Send to Email
+            </x-primary-button>
+        </div> 
+    @endif
     {{-- <x-modal name="confirm-examinee-retake" :show="$errors->isNotEmpty()" maxWidth='md' focusable>
         <form wire:submit="retake" class="p-6">
             <h2 class="text-lg font-medium text-gray-900 text-center">

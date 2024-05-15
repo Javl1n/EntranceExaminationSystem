@@ -41,5 +41,11 @@ Route::middleware(['guest'])->group(function () {
     Volt::route('/exam/{examinee}/result', 'pages.guest.result')->name('examinees.result');
 });
 
+Route::get('/mailable', function () {
+    $examinee = App\Models\Examinee::find(1);
+
+    return new App\Mail\ResultSent($examinee);
+});
+
 
 require __DIR__.'/auth.php';

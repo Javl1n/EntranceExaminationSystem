@@ -56,10 +56,12 @@ $sectionExaminees = computed(function ($id) {
             <div class="flex justify-between gap-2 font-bold h-40">
                 @foreach ($this->sections as $section)
                     <div class='border-2 border-blue-500 w-full text-center flex flex-col gap-2 text-black justify-center rounded-xl'>
-                        <h1 class="text-6xl font-bold">
-                            {{ $this->sectionExaminees($section->id) }}
-                        </h1>
-                        <h1 class="text-center text-sm">{{ $section->letter }} - {{ $section->description }}</h1>
+                        <a href="{{ route('sections.index', ['section' => $loop->iteration > 1 ? $loop->iteration : null]) }}">
+                            <h1 class="text-6xl font-bold">
+                                {{ $this->sectionExaminees($section->id) }}
+                            </h1>
+                            <h1 class="text-center text-sm">{{ $section->letter }} - {{ $section->description }}</h1>
+                        </a>
                     </div>
                 @endforeach
             </div>

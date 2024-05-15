@@ -89,18 +89,19 @@ $submit = function ()  {
             'total' => $this->questions->where('category_id', 3)->count(),
             'category_id' => 3
         ],
-    ])->sortByDesc('score');
+    ])->sortByDesc('score')->values();
     
+
     $scorePercent = round($scores->pluck('score')->sum() / $this->questions->count() * 100, 2);
 
     if($this->examinee->grade_level === 7) {
         $this->examinee->sectionPivot()->firstOrCreate([
             'section_id' => match(true) {
-                $average < 75 => 5,
-                $average < 80 => 4,
-                $average < 85 => 3,
-                $average < 90 => 2,
-                $average <=100 => 1,
+                $scorePercent < 75 => 5,
+                $scorePercent < 80 => 4,
+                $scorePercent < 85 => 3,
+                $scorePercent < 90 => 2,
+                $scorePercent <=100 => 1,
             }
         ]);
     } else if ($this->examinee->grade_level === 11) {
@@ -113,19 +114,19 @@ $submit = function ()  {
         
             $this->examinee->strandRecommendations()->firstOrCreate([
                 'ranking' => 2,
-                'strand_id' => match ($scores[0]->category->title) {
+                'strand_id' => match ($scores[1]->category->title) {
                     'Mathematics' => 
-                        match ($scores[1]->category->title) {
+                        match ($scores[2]->category->title) {
                             'Science' => 1,
                             'English' => 2
                         },
                     'Science' => 
-                        match ($scores[1]->category->title) {
+                        match ($scores[2]->category->title) {
                             'Mathematics' => 1,
                             'English' => 3,
                         },
                     'English' => 
-                        match ($scores[1]->category->title) {
+                        match ($scores[2]->category->title) {
                             'Mathematics' => 2,
                             'Science' => 3,
                         },
@@ -134,7 +135,7 @@ $submit = function ()  {
 
             $this->examinee->strandRecommendations()->firstOrCreate([
                 'ranking' => 3,
-                'strand_id' => match ($scores[0]->category->title) {
+                'strand_id' => match ($scores[1]->category->title) {
                     'Mathematics' => 
                         match ($scores[2]->category->title) {
                             'Science' => 1,
@@ -219,20 +220,20 @@ $submit = function ()  {
             $this->examinee->strandRecommendations()->firstOrCreate([
                 'ranking' => 3,
                 'strand_id' => match ($scores[1]->category->title) {
-                    'mathematics' => 
+                    'Mathematics' => 
                         match ($scores[2]->category->title) {
-                            'science' => 1,
-                            'english' => 2
+                            'Science' => 1,
+                            'English' => 2
                         },
-                    'science' => 
+                    'Science' => 
                         match ($scores[2]->category->title) {
-                                'mathematics' => 1,
-                                'english' => 3,
+                                'Mathematics' => 1,
+                                'English' => 3,
                         },
                     'english' => 
                         match ($scores[2]->category->title) {
-                            'mathematics' => 2,
-                            'science' => 3,
+                            'Mathematics' => 2,
+                            'Science' => 3,
                         },
                 },
             ]);
