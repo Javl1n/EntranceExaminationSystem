@@ -61,7 +61,7 @@ $percent = computed(function () {
     <div class="pt-24 mb-10">
         <h1 class="font-bold text-3xl text-center">Your Result</h1>
     </div>
-    <div class="max-w-3xl mx-auto shadow bg-white  rounded-lg">
+    {{-- <div class="max-w-3xl mx-auto shadow bg-white  rounded-lg">
         <div class="py-8 px-10 text-xl">
             <div class="flex justify-between">
                 <div>Name: <span class="font-bold">{{ $examinee->name }}</span></div>
@@ -72,7 +72,7 @@ $percent = computed(function () {
                 <div>Examination Date: <span class="font-bold">{{ $examinee->created_at->format('F j, Y') }}</span></div>
             </div>
         </div>
-    </div>
+    </div> --}}
     <div class="mt-10">
         @livewire('guest.result.scores', ['examinee' => $this->examinee, 'questions' => $this->questions])
     </div>

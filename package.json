@@ -17,6 +17,7 @@
     "dependencies": {
         "@alpinejs/collapse": "^3.13.7",
         "@alpinejs/intersect": "^3.13.8",
-        "html-to-image": "^1.11.11"
+        "html-to-image": "^1.11.11",
+        "html2canvas": "^1.4.1"
     }
 }

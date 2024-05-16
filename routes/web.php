@@ -41,10 +41,19 @@ Route::middleware(['guest'])->group(function () {
     Volt::route('/exam/{examinee}/result', 'pages.guest.result')->name('examinees.result');
 });
 
-Route::get('/mailable', function () {
-    $examinee = App\Models\Examinee::find(1);
+Route::get('/mailable/{examinee}', function ($examinee) {
+    $examinee = App\Models\Examinee::find($examinee);
+
 
     return new App\Mail\ResultSent($examinee);
+})->name('mail.test');
+
+Route::get('/slip/{examinee}', function ($examinee) {
+    $examinee = App\Models\Examinee::find($examinee);
+    
+    return view('components.qualifying-slip', [
+        'examinee' => $examinee
+    ]);
 });
 
 

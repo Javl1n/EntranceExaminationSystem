@@ -3,7 +3,11 @@
 use function Livewire\Volt\{state, computed};
 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+
 use App\Models\User;
+use App\Mail\ResultSent;
+
 
 state([
     'examinee',
@@ -90,13 +94,28 @@ $retake = function () {
     ]);
 
     $this->redirect(route('examinees.startExam', ['examinee' => $this->examinee]), navigate: true);
+};
+
+$sendEmail = function () {
+    // return $this->redirectRoute('mail.test', ['examinee' => $this->examinee], navigate: true);
+    Mail::to($this->examinee)->send(new ResultSent($this->examinee));
 }
 
 ?>
 
 <div>
-    <div class="max-w-3xl mx-auto shadow bg-white rounded-lg" >
-        <div class="flex gap-10 py-8 px-10 justify-center">
+    <div id="photo" class="max-w-3xl py-5 mx-auto shadow bg-white rounded-lg" >
+        <div class="px-10 text-sm">
+            <div class="flex justify-between">
+                <div>Name: <span class="font-bold">{{ $examinee->name }}</span></div>
+                <div>Email: <span class="font-bold">{{ $examinee->email }}</span></div>
+            </div>
+            <div class="flex justify-between">
+                <div>Grade Level: <span class="font-bold">Grade {{ $examinee->grade_level }}</span></div>
+                <div>Examination Date: <span class="font-bold">{{ $examinee->created_at->format('F j, Y') }}</span></div>
+            </div>
+        </div>
+        <div class="flex gap-10 px-10 justify-center">
             <div class="bg-gradient-to-bl from-30% from-blue-500 to-indigo-200 h-52 w-52 aspect-square rounded-full text-center flex flex-col gap-2 justify-center my-auto">
                 <div class="text-white font-bold">Average</div>
                 <h1 class="text-white font-extrabold text-6xl">{{ $this->average['percent'] }}%</h1>
@@ -168,9 +187,9 @@ $retake = function () {
             </div>
         </div>
     @endif
-    @if (request()->routeIs('examiness.startExam'))
+    @if (request()->routeIs('examinees.result'))
         <div class="flex justify-center mt-10">
-            <x-primary-button x-on:click="dlImage" class="mx-auto">
+            <x-primary-button x-on:click="$wire.sendEmail" class="mx-auto">
                 Send to Email
             </x-primary-button>
         </div> 

@@ -25,12 +25,11 @@ $grade11 = fn () => $this->grade = 11;
 
 $register = function () {
     $this->validate();
-    $examinee = Examinee::firstOrCreate([
-        'name' => $this->name,
-        // 'contact' => $this->contact,
-        'email' => $this->email,
-        'grade_level' => $this->grade, 
-    ]);
+    
+    $examinee = Examinee::firstOrCreate(
+        ['email' => $this->email],
+        ['name' => $this->name, 'grade_level' => $this->grade,]
+    );
 
     return $this->redirectRoute('examinees.startExam',['examinee' => $examinee->id],  navigate: true, );
 };

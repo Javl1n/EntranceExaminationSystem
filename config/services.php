@@ -37,5 +37,10 @@ return [
 
     'mailersend' => [
         'key' => env('MAILERSEND_API_KEY'),
-    ]
+    ],
+
+    'hcti' => [
+        'key' => env('HCTI_API'),
+        'user' => env('HCTI_USER_ID')
+    ],
 ];
