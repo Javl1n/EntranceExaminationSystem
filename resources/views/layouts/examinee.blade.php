@@ -19,7 +19,7 @@
         @if (!request()->routeIs('examinees.startExam'))
             <a href="{{ route('welcome') }}" wire:navigate class="flex gap-2 m-2 p-2 rounded-lg absolute hover:bg-gray-200 transition linear">
                 <x-application-logo class="w-10" />
-                <div class="font-bold text-xl my-auto">SLSPI</div>
+                <div class="font-bold text-xl my-auto">Entrance Examination</div>
             </a>
         @endif
         

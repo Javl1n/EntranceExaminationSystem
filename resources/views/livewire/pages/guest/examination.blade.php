@@ -230,7 +230,7 @@ $submit = function ()  {
                                 'Mathematics' => 1,
                                 'English' => 3,
                         },
-                    'english' => 
+                    'English' => 
                         match ($scores[2]->category->title) {
                             'Mathematics' => 2,
                             'Science' => 3,
@@ -387,10 +387,10 @@ $submit = function ()  {
                                 case 1:
                                     $categoryColor = 'bg-red-400';
                                     break;
-                                case 2:
+                                case 3:
                                     $categoryColor = 'bg-yellow-400';
                                     break;
-                                case 3:
+                                case 2:
                                     $categoryColor = 'bg-purple-400';
                                     break;
                                 default:
@@ -459,6 +459,21 @@ $submit = function ()  {
                             Finish
                         </button>
                     </div>
+                </div>
+                <div x-show = "$wire.devMode || n >= {{ $questions->count() }} -1 || hours().value < 0 || minutes().value < 0 || seconds().value < 0">
+                    <button
+                        x-data = "{
+                            submit () {
+                                @foreach ($this->questionOrder as $question)
+                                    $wire.selectAnswers({{ $question }}, selectedAnswers.question{{ $question }})
+                                @endforeach
+                                $wire.submit()
+                            },
+                        }"
+                        x-on:click="submit()"
+                        class="bg-blue-500 text-white text-xl font-bold uppercase px-12 py-2 rounded-lg">
+                        Finish
+                    </button>
                 </div>
                 <div x-show="hours().value > 0 || minutes().value > 0 || seconds().value > 0" >
                     <div x-show = "n < {{ $questions->count() }} -1 && eval('selectedAnswers.question' + order[n]) !== ''" class="transition delay-200">

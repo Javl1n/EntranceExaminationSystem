@@ -18,7 +18,7 @@ state([
 
 // question counts
 $englishQuestionCount = computed(function () {
-    return $this->examinee->scores()->where('category_id', 2)->first()->total;
+    return $this->examinee->scores()->where('category_id', 3)->first()->total;
 });
 
 $mathematicsQuestionCount = computed(function () {
@@ -26,12 +26,12 @@ $mathematicsQuestionCount = computed(function () {
 });
 
 $scienceQuestionCount = computed(function () {
-    return $this->examinee->scores()->where('category_id', 3)->first()->total;
+    return $this->examinee->scores()->where('category_id', 2)->first()->total;
 });
 
 // scores
 $englishScore = computed(function () {
-    $count = $this->examinee->scores()->where('category_id', 2)->first()->score;
+    $count = $this->examinee->scores()->where('category_id', 3)->first()->score;
     $percent = 0;
     if ($this->englishQuestionCount > 0) {
         $percent = round(($count / $this->englishQuestionCount) * 100, 1);
@@ -40,7 +40,7 @@ $englishScore = computed(function () {
 });
 
 $scienceScore = computed(function () {
-    $count = $this->examinee->scores()->where('category_id', 3)->first()->score;
+    $count = $this->examinee->scores()->where('category_id', 2)->first()->score;
     $percent = 0;
     if ($this->scienceQuestionCount > 0) {
         $percent = round(($count / $this->scienceQuestionCount) * 100, 1);
@@ -115,7 +115,7 @@ $sendEmail = function () {
                 <div>Examination Date: <span class="font-bold">{{ $examinee->created_at->format('F j, Y') }}</span></div>
             </div>
         </div>
-        <div class="flex gap-10 px-10 justify-center">
+        <div class="flex gap-10 px-10 mt-4 justify-center">
             <div class="bg-gradient-to-bl from-30% from-blue-500 to-indigo-200 h-52 w-52 aspect-square rounded-full text-center flex flex-col gap-2 justify-center my-auto">
                 <div class="text-white font-bold">Average</div>
                 <h1 class="text-white font-extrabold text-6xl">{{ $this->average['percent'] }}%</h1>

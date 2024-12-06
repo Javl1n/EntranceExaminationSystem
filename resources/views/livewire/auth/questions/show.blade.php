@@ -45,7 +45,7 @@ $deleteQuestion = function() {
                     <div class="w-14 rounded-l text-center py-4 font-bold {{ $letterColor }}">{{ $answer->letter }}</div>
                 </div>
                 <div class="py-2 px-2 flex-1 rounded-r {{ $letterColor }}">
-                    <div class="px-2 py-2 rounded bg-white break-all h-full">{{ $answer->description }}</div>
+                    <div class="px-2 py-2 rounded bg-white break-all h-full break-words">{{ $answer->description }}</div>
                 </div>
             </div>
         @endforeach

@@ -75,7 +75,6 @@ $selectSection = function ($section) {
                 </div>
             </div>
             <div class="grid grid-cols-12 w-full border-b-2 pb-4 px-2">
-                {{-- <div class="col-span-1">no.</div> --}}
                 <div class="col-span-3">Name</div>
                 <div class="col-span-3 text-center">Score</div>
                 <div class="col-span-2 text-center">Average</div>
@@ -98,12 +97,11 @@ $selectSection = function ($section) {
                     <div @class([
                         "grid grid-cols-12 w-full py-2 px-2 hover:bg-gray-50 transition duration-150",
                     ])>
-                        {{-- <div class="col-span-1">{{ $loop->iteration }}</div> --}}
                         <div class="col-span-3">{{ $examinee->name }}</div>
                         <div class="col-span-3 text-center">{{ $sumScore }} out of {{ $sumTotal; }}</div>
                         <div class="col-span-2 text-center">{{ round($sumScore / $sumTotal * 100, 2) }}%</div>
                         <div class="col-span-2 text-center">{{ $examinee->created_at->format('F j, Y') }}</div>
-                        <div class="col-span-2 text-center">{{ $examinee->created_at->format('h:i a') }}</div>
+                        <div class="col-span-2 text-center">{{ $examinee->created_at->diffForHumans() }}</div>
                     </div>
                 </a>
             @endforeach

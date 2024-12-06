@@ -34,10 +34,10 @@ state([
                     case 1:
                         $categoryColor = 'bg-red-400';
                         break;
-                    case 2:
+                    case 3:
                         $categoryColor = 'bg-yellow-400';
                         break;
-                    case 3:
+                    case 2:
                         $categoryColor = 'bg-purple-400';
                         break;
                     default:
