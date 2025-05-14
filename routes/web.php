@@ -27,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Volt::route('dashboard', 'dashboard')->name('dashboard');
 
     Volt::route('/exams', 'pages.exam.index')->name('exams.index');
+    Volt::route('/exams/overview/{grade}', 'pages.exam.overview')->name('exams.overview');
 
     Volt::route('/sections', 'pages.examinees.sections.index')->name('sections.index');
     Volt::route('/sections/{examinee:id}', 'pages.examinees.show')->name('sections.show');

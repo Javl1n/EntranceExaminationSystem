@@ -18,7 +18,7 @@ state([
     <h1 class="text-center font-bold text-2xl">
         {{ $this->heading }}
     </h1>
-
+ 
     @foreach ($questions as $question)
 
         <div class="mt-4" 

@@ -6,7 +6,10 @@
     "license": "MIT",
     "require": {
         "php": "^8.2.0",
+        "asantibanez/livewire-charts": "^4.1",
+        "blade-ui-kit/blade-icons": "^1.8",
         "guzzlehttp/guzzle": "^7.2",
+        "inertiajs/inertia-laravel": "^2.0",
         "itsgoingd/clockwork": "^5.2",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
@@ -14,13 +17,15 @@
         "livewire/livewire": "^3.4",
         "livewire/volt": "^1.0",
         "mailersend/laravel-driver": "^2.5",
-        "resend/resend-php": "^0.12.0"
+        "mallardduck/blade-lucide-icons": "^1.23",
+        "resend/resend-php": "^0.12.0",
+        "tightenco/ziggy": "^2.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
         "laravel/breeze": "^2.0",
         "laravel/pint": "^1.0",
-        "laravel/sail": "^1.18",
+        "laravel/sail": "^1.41",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
         "phpunit/phpunit": "^10.1",

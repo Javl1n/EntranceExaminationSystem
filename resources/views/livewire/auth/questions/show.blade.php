@@ -1,6 +1,7 @@
 <?php
 
 use function Livewire\Volt\{state, on};
+use App\Models\Answer;
 
 state([
     'question',
@@ -15,6 +16,19 @@ $deleteQuestion = function() {
     $this->question->delete();
     session()->flash('deleted', 'Question Deleted Successfully');
     return $this->redirectRoute('exams.index', navigate: true);
+};
+
+$percentage = function (Answer $answer) {
+    $examinees = $answer->examinees_answers->count();
+
+    $total = $this->question->examinee_answers->count();
+
+    if ($total == 0) {
+        return 0;
+    }
+
+    return round($examinees / $total * 100);
+    // return $percentage;
 }
 
 ?>
@@ -45,7 +59,12 @@ $deleteQuestion = function() {
                     <div class="w-14 rounded-l text-center py-4 font-bold {{ $letterColor }}">{{ $answer->letter }}</div>
                 </div>
                 <div class="py-2 px-2 flex-1 rounded-r {{ $letterColor }}">
-                    <div class="px-2 py-2 rounded bg-white break-all h-full break-words">{{ $answer->description }}</div>
+                    <div style="background-image: linear-gradient(to right, #dbeafe {{ $this->percentage($answer) - 1 }}%, white {{ $this->percentage($answer) }}%);" class="ring-[1px] ring-gray-200 px-2 py-2 rounded break-all h-full break-words">
+                        <div class="flex">
+                            <div class="flex-1">{{ $answer->description }}</div>
+                            <div class="text-xs my-auto text-gray-700 font-bold">{{ $this->percentage($answer) }}%</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         @endforeach

@@ -12,7 +12,7 @@ use App\Models\Answer;
 layout('layouts.examinee');
 
 state([
-    'examinee',
+    'grade',
     'questions',
     'timer',
     'selectedAnswers',
@@ -20,14 +20,10 @@ state([
 ]);
 
 mount(function () {
-    $this->examinee = Examinee::findOrFail($this->examinee);
-    if($this->examinee->answered) {
-        return $this->redirectRoute('examinees.result', ['examinee' => $this->examinee->id], navigate: true);
-    }
     $this->questions = Question::with(['category', 'answers' => function (Builder $query) {
         $query->orderBy('letter');
-    }])->where('grade_level', $this->examinee->grade_level)->get();
-    $this->timer = Timer::where('grade', $this->examinee->grade_level)->first();
+    }])->where('grade_level', $this->grade)->get();
+    $this->timer = Timer::where('grade', $this->grade)->first();
 });
 
 $questionOrder = computed(function () {
@@ -69,200 +65,200 @@ $categoryColor = computed(function ($subject) {
     }
 });
 
-$selectAnswers = function ($question, $letter) {
-    $this->selectedAnswers[$question] = $letter;
-};
+// $selectAnswers = function ($question, $letter) {
+//     $this->selectedAnswers[$question] = $letter;
+// };
 
 
-$submit = function ()  {
-    if($this->examinee->answered) {
-        return $this->redirectRoute('examinees.result', ['examinee' => $this->examinee->id], navigate: true);
-    }
+// $submit = function ()  {
 
-    $this->answers = collect($this->selectedAnswers);
 
-    $answers = $this->answers->filter(function ($value, $key) {
-        return $value !== '';
-    })->map(function ($value, $key) {
-        return $this->examinee->answers()->firstOrCreate([
-            'question_id' => $key,
-            'answer_id' => $value
-        ]);
-    });
+//     $this->answers = collect($this->selectedAnswers);
 
-    $scores = $this->examinee->scores()->createMany([
-        [
-            'score' => $answers->where('question.category_id', 1)->where('answer.is_correct')->count(),
-            'total' => $this->questions->where('category_id', 1)->count(),
-            'category_id' => 1
-        ],
-        [
-            'score' => $answers->where('question.category_id', 2)->where('answer.is_correct')->count(),
-            'total' => $this->questions->where('category_id', 2)->count(),
-            'category_id' => 2
-        ],
-        [
-            'score' => $answers->where('question.category_id', 3)->where('answer.is_correct')->count(),
-            'total' => $this->questions->where('category_id', 3)->count(),
-            'category_id' => 3
-        ],
-    ])->sortByDesc('score')->values();
+//     $answers = $this->answers->filter(function ($value, $key) {
+//         return $value !== '';
+//     })->map(function ($value, $key) {
+//         return $this->examinee->answers()->firstOrCreate([
+//             'question_id' => $key,
+//             'answer_id' => $value
+//         ]);
+//     });
+
+//     $scores = $this->examinee->scores()->createMany([
+//         [
+//             'score' => $answers->where('question.category_id', 1)->where('answer.is_correct')->count(),
+//             'total' => $this->questions->where('category_id', 1)->count(),
+//             'category_id' => 1
+//         ],
+//         [
+//             'score' => $answers->where('question.category_id', 2)->where('answer.is_correct')->count(),
+//             'total' => $this->questions->where('category_id', 2)->count(),
+//             'category_id' => 2
+//         ],
+//         [
+//             'score' => $answers->where('question.category_id', 3)->where('answer.is_correct')->count(),
+//             'total' => $this->questions->where('category_id', 3)->count(),
+//             'category_id' => 3
+//         ],
+//     ])->sortByDesc('score')->values();
     
 
-    $scorePercent = round($scores->pluck('score')->sum() / $this->questions->count() * 100, 2);
+//     $scorePercent = round($scores->pluck('score')->sum() / $this->questions->count() * 100, 2);
 
-    if($this->examinee->grade_level === 7) {
-        $this->examinee->sectionPivot()->firstOrCreate([
-            'section_id' => match(true) {
-                $scorePercent < 75 => 5,
-                $scorePercent < 80 => 4,
-                $scorePercent < 85 => 3,
-                $scorePercent < 90 => 2,
-                $scorePercent <=100 => 1,
-            }
-        ]);
-    } else if ($this->examinee->grade_level === 11) {
-        // ddd($scores[2]->category->title);
-        if($scorePercent < 75) {
-            $this->examinee->strandRecommendations()->firstOrCreate([
-                'ranking' => 1,
-                'strand_id' => 4,
-            ]);
+//     if($this->examinee->grade_level === 7) {
+//         $this->examinee->sectionPivot()->firstOrCreate([
+//             'section_id' => match(true) {
+//                 $scorePercent < 75 => 5,
+//                 $scorePercent < 80 => 4,
+//                 $scorePercent < 85 => 3,
+//                 $scorePercent < 90 => 2,
+//                 $scorePercent <=100 => 1,
+//             }
+//         ]);
+//     } else if ($this->examinee->grade_level === 11) {
+//         // ddd($scores[2]->category->title);
+//         if($scorePercent < 75) {
+//             $this->examinee->strandRecommendations()->firstOrCreate([
+//                 'ranking' => 1,
+//                 'strand_id' => 4,
+//             ]);
         
-            $this->examinee->strandRecommendations()->firstOrCreate([
-                'ranking' => 2,
-                'strand_id' => match ($scores[1]->category->title) {
-                    'Mathematics' => 
-                        match ($scores[2]->category->title) {
-                            'Science' => 1,
-                            'English' => 2
-                        },
-                    'Science' => 
-                        match ($scores[2]->category->title) {
-                            'Mathematics' => 1,
-                            'English' => 3,
-                        },
-                    'English' => 
-                        match ($scores[2]->category->title) {
-                            'Mathematics' => 2,
-                            'Science' => 3,
-                        },
-                },
-            ]);
+//             $this->examinee->strandRecommendations()->firstOrCreate([
+//                 'ranking' => 2,
+//                 'strand_id' => match ($scores[1]->category->title) {
+//                     'Mathematics' => 
+//                         match ($scores[2]->category->title) {
+//                             'Science' => 1,
+//                             'English' => 2
+//                         },
+//                     'Science' => 
+//                         match ($scores[2]->category->title) {
+//                             'Mathematics' => 1,
+//                             'English' => 3,
+//                         },
+//                     'English' => 
+//                         match ($scores[2]->category->title) {
+//                             'Mathematics' => 2,
+//                             'Science' => 3,
+//                         },
+//                 },
+//             ]);
 
-            $this->examinee->strandRecommendations()->firstOrCreate([
-                'ranking' => 3,
-                'strand_id' => match ($scores[1]->category->title) {
-                    'Mathematics' => 
-                        match ($scores[2]->category->title) {
-                            'Science' => 1,
-                            'English' => 2
-                        },
-                    'Science' => 
-                        match ($scores[2]->category->title) {
-                            'Mathematics' => 1,
-                            'English' => 3,
-                        },
-                    'English' => 
-                        match ($scores[2]->category->title) {
-                            'Mathematics' => 2,
-                            'Science' => 3,
-                        },
-                },
-            ]);
+//             $this->examinee->strandRecommendations()->firstOrCreate([
+//                 'ranking' => 3,
+//                 'strand_id' => match ($scores[1]->category->title) {
+//                     'Mathematics' => 
+//                         match ($scores[2]->category->title) {
+//                             'Science' => 1,
+//                             'English' => 2
+//                         },
+//                     'Science' => 
+//                         match ($scores[2]->category->title) {
+//                             'Mathematics' => 1,
+//                             'English' => 3,
+//                         },
+//                     'English' => 
+//                         match ($scores[2]->category->title) {
+//                             'Mathematics' => 2,
+//                             'Science' => 3,
+//                         },
+//                 },
+//             ]);
 
-            $this->examinee->strandRecommendations()->firstOrCreate([
-                'ranking' => 4,
-                'strand_id' => match ($scores[1]->category->title) {
-                    'Mathematics' => 
-                        match ($scores[2]->category->title) {
-                            'Science' => 1,
-                            'English' => 2
-                        },
-                    'Science' => 
-                        match ($scores[2]->category->title) {
-                                'Mathematics' => 1,
-                                'English' => 3,
-                        },
-                    'English' => 
-                        match ($scores[2]->category->title) {
-                            'Mathematics' => 2,
-                            'Science' => 3,
-                        },
-                },
-            ]);
-        } else {
-            $this->examinee->strandRecommendations()->firstOrCreate([
-                'ranking' => 1,
-                'strand_id' => match ($scores[0]->category->title) {
-                    'Mathematics' => 
-                        match ($scores[1]->category->title) {
-                            'Science' => 1,
-                            'English' => 2
-                        },
-                    'Science' => 
-                        match ($scores[1]->category->title) {
-                            'Mathematics' => 1,
-                            'English' => 3,
-                        },
-                    'English' => 
-                        match ($scores[1]->category->title) {
-                            'Mathematics' => 2,
-                            'Science' => 3,
-                        },
-                },
-            ]);
+//             $this->examinee->strandRecommendations()->firstOrCreate([
+//                 'ranking' => 4,
+//                 'strand_id' => match ($scores[1]->category->title) {
+//                     'Mathematics' => 
+//                         match ($scores[2]->category->title) {
+//                             'Science' => 1,
+//                             'English' => 2
+//                         },
+//                     'Science' => 
+//                         match ($scores[2]->category->title) {
+//                                 'Mathematics' => 1,
+//                                 'English' => 3,
+//                         },
+//                     'English' => 
+//                         match ($scores[2]->category->title) {
+//                             'Mathematics' => 2,
+//                             'Science' => 3,
+//                         },
+//                 },
+//             ]);
+//         } else {
+//             $this->examinee->strandRecommendations()->firstOrCreate([
+//                 'ranking' => 1,
+//                 'strand_id' => match ($scores[0]->category->title) {
+//                     'Mathematics' => 
+//                         match ($scores[1]->category->title) {
+//                             'Science' => 1,
+//                             'English' => 2
+//                         },
+//                     'Science' => 
+//                         match ($scores[1]->category->title) {
+//                             'Mathematics' => 1,
+//                             'English' => 3,
+//                         },
+//                     'English' => 
+//                         match ($scores[1]->category->title) {
+//                             'Mathematics' => 2,
+//                             'Science' => 3,
+//                         },
+//                 },
+//             ]);
 
-            $this->examinee->strandRecommendations()->firstOrCreate([
-                'ranking' => 2,
-                'strand_id' => match ($scores[0]->category->title) {
-                    'Mathematics' => 
-                        match ($scores[2]->category->title) {
-                            'Science' => 1,
-                            'English' => 2
-                        },
-                    'Science' => 
-                        match ($scores[2]->category->title) {
-                            'Mathematics' => 1,
-                            'English' => 3,
-                        },
-                    'English' => 
-                        match ($scores[2]->category->title) {
-                            'Mathematics' => 2,
-                            'Science' => 3,
-                        },
-                },
-            ]);
+//             $this->examinee->strandRecommendations()->firstOrCreate([
+//                 'ranking' => 2,
+//                 'strand_id' => match ($scores[0]->category->title) {
+//                     'Mathematics' => 
+//                         match ($scores[2]->category->title) {
+//                             'Science' => 1,
+//                             'English' => 2
+//                         },
+//                     'Science' => 
+//                         match ($scores[2]->category->title) {
+//                             'Mathematics' => 1,
+//                             'English' => 3,
+//                         },
+//                     'English' => 
+//                         match ($scores[2]->category->title) {
+//                             'Mathematics' => 2,
+//                             'Science' => 3,
+//                         },
+//                 },
+//             ]);
 
-            $this->examinee->strandRecommendations()->firstOrCreate([
-                'ranking' => 3,
-                'strand_id' => match ($scores[1]->category->title) {
-                    'Mathematics' => 
-                        match ($scores[2]->category->title) {
-                            'Science' => 1,
-                            'English' => 2
-                        },
-                    'Science' => 
-                        match ($scores[2]->category->title) {
-                                'Mathematics' => 1,
-                                'English' => 3,
-                        },
-                    'English' => 
-                        match ($scores[2]->category->title) {
-                            'Mathematics' => 2,
-                            'Science' => 3,
-                        },
-                },
-            ]);
-        }
-    }
+//             $this->examinee->strandRecommendations()->firstOrCreate([
+//                 'ranking' => 3,
+//                 'strand_id' => match ($scores[1]->category->title) {
+//                     'Mathematics' => 
+//                         match ($scores[2]->category->title) {
+//                             'Science' => 1,
+//                             'English' => 2
+//                         },
+//                     'Science' => 
+//                         match ($scores[2]->category->title) {
+//                                 'Mathematics' => 1,
+//                                 'English' => 3,
+//                         },
+//                     'English' => 
+//                         match ($scores[2]->category->title) {
+//                             'Mathematics' => 2,
+//                             'Science' => 3,
+//                         },
+//                 },
+//             ]);
+//         }
+//     }
 
-    $this->examinee->update([
-        'answered' => 1
-    ]);
+//     $this->examinee->update([
+//         'answered' => 1
+//     ]);
 
-    return $this->redirectRoute('examinees.result', ['examinee' => $this->examinee->id], navigate: true);
-};
+//     return $this->redirectRoute('examinees.result', ['examinee' => $this->examinee->id], navigate: true);
+// };
+
+$submit = fn() => redirect(route('exams.index'));
 
 ?>
 
@@ -321,8 +317,14 @@ $submit = function ()  {
             }
         }
     })"
-    >
-        <h1 class="font-bold text-3xl text-center">Grade {{ $examinee->grade_level }} Entrance Examination</h1>
+    >   
+        <a href="{{ route('exams.index') }}">
+            <div class="flex">
+                <x-lucide-arrow-left class="w-5 h-5" />
+                <span class="my-auto">Go Back</span>
+            </div>
+        </a>
+        <h1 class="font-bold text-3xl text-center mt-4">Grade {{ $this->grade }} Entrance Examination - Overview</h1>
         <div class="flex justify-between mt-10">
             <div>
                 Question <span x-text="n + 1"></span> out of {{ $questions->count() }}
@@ -483,9 +485,9 @@ $submit = function ()  {
                         <button
                             x-data = "{
                                 submit () {
-                                    @foreach ($this->questionOrder as $question)
+                                    {{-- @foreach ($this->questionOrder as $question)
                                         $wire.selectAnswers({{ $question->id }}, selectedAnswers.question{{ $question->id }})
-                                    @endforeach
+                                    @endforeach --}}
                                     $wire.submit()
                                 },
                             }"

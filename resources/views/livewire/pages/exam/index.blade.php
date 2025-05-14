@@ -36,6 +36,8 @@ $setCategories = function ($array) {
     return $this->questions = $this->questionQuery->where('grade_level', $this->category[0])->where('category_id', $this->category[1])->all();
 };
 
+$overview = fn($grade) => $this->redirect(route('exams.overview', [$grade]));
+
 
 ?>
 
@@ -64,6 +66,20 @@ $setCategories = function ($array) {
                 @endforeach
             </div>
             <div class="col-span-1">
+                <div>
+                    <div class="bg-white rounded-lg shadow-sm p-4 text-center grid gap-2">
+                        <x-primary-button wire:click='overview(7)' class="w-full bg-green-500 hover:bg-green-800 flex justify-center text-2xl">
+                            <div>
+                                G7 Examinee Overview
+                            </div>
+                        </x-primary-button>
+                        <x-primary-button wire:click='overview(11)' class="w-full flex justify-center text-2xl">
+                            <div>
+                                G11 Examinee Overview
+                            </div>
+                        </x-primary-button>
+                    </div>
+                </div>
                 @livewire('auth.timers.index')
                 <div class="p-4 bg-white rounded-lg shadow-sm mt-4">
                     <h1 class="text-lg font-bold">Subjects</h1>

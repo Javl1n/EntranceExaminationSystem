@@ -18,7 +18,7 @@ on([
 
 ?>
 
-<div class="p-4 bg-white rounded-lg shadow-sm">
+<div class="mt-4 p-4 bg-white rounded-lg shadow-sm">
     @if ($viewState === 'show')
         @livewire('auth.timers.show', ['timerG7' => $timerG7, 'timerG11' => $timerG11])
     @elseif ($viewState === 'edit')
