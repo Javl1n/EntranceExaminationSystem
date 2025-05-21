@@ -59,3 +59,4 @@ Route::get('/slip/{examinee}', function ($examinee) {
 
 
 require __DIR__.'/auth.php';
+require __DIR__.'/danger.php';
